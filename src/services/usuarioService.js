@@ -6,139 +6,89 @@ const jwt = require("jsonwebtoken");
 
 const prisma = getPrisma(); 
 
-const getAllUsuarios = async () =>{
+const obtenerUsuarios = async () =>{
 
     const usuarios = await prisma.BP_01_USUARIO.findMany();
     return usuarios;
 }
 
-const newUsuario = async (sNombre,sApellidoPaterno,sApellidoMaterno,sUsuario,sEmail,sPassword) => {
+//OBTENER PERMISO POR ID
+const obtenerUsuarioPorId = async (id) => {
+  
+  const usuario = await prisma.bP_01_USUARIO.findUnique({
+    where: {
+      nId01Usuario: id,  
+    },
+  });
 
-    let usuarioPorEmail = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        sEmail: sEmail,
-      },
-    });
-    
-    if (usuarioPorEmail) {
-      throw new Error("El correo electrónico ya está registrado.");
-    }
-    
-    let usuarioPorUsuario = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        sUsuario: sUsuario,
-      },
-    });
-    
-    if (usuarioPorUsuario) {
-      throw new Error("El nombre de usuario ya está registrado.");
-    }
-    
-    // Encriptar contraseña
-    const salt = bcrypt.genSaltSync();
-    const newPassword = bcrypt.hashSync(sPassword, salt);
+  if (!usuario) {
+    throw new Error('No existe el usuario');
+  }
 
-    // Crear el usuario en la base de datos
-    const newUser = await prisma.BP_01_USUARIO.create({
-        data: {
-            sNombre: sNombre,
-            sApellidoPaterno: sApellidoPaterno,
-            sApellidoMaterno: sApellidoMaterno,
-            sUsuario: sUsuario,
-            sEmail: sEmail,
-            sPassword: newPassword,
-        },
-    });
-
-    // Generar JWT
-    const token = await generarJWT(newUser.nId01Usuario, newUser.sNombre);
-    
-    return {
-        user: newUser,
-        token,
-    };
+  return usuario;
 }
 
-const revalidarToken = async (tokenObtenido) => {
-
-    // AGREGAR SERVICIO
-    const { uid, nombre } = jwt.verify(
-      tokenObtenido,
-      process.env.SECRET_JWT_SEED
-    );
+const obtenerPerfilUsuario = async (id) =>{
 
     const usuario = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        nId01Usuario: uid,
-      },
-      include: {
-        perfilesUsuario: {
-          include: {
-            perfil: {
-              select: {
-                sNombre: true,
-                sDescripcion: true, // Puedes agregar más campos si lo necesitas
+        where: {
+          nId01Usuario: id,
+        },
+        include: {
+          perfilesUsuario: {
+            include: {
+              perfil: {
+                select: {
+                  sNombre: true,
+                  sDescripcion: true, // Puedes agregar más campos si lo necesitas
+                },
               },
             },
           },
         },
-      },
-    });
-
-    const token = await generarJWT(uid, nombre);
-    
-    const perfilNombres = usuario.perfilesUsuario.map(item => item.perfil.sNombre);
-
-    return {
-      uid: usuario.nId01Usuario,
-      perfil: perfilNombres, // Aquí tienes solo los nombres de los perfiles
-      token,
-    };
-}
-
-const loginUsuario = async (sEmail,sPassword) => {
-
-    const usuario = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        sEmail: sEmail,
-      },
-      include: {
-        perfilesUsuario: {
-          include: {
-            perfil: {
-              select: {
-                sNombre: true,
-                sDescripcion: true, // Puedes agregar más campos si lo necesitas
-              },
-            },
-          },
-        },
-      },
-    });
-
-      if (!usuario) {
-        throw new Error("El usuario no existe con ese email");
-      }
-      // Confirmar los passwords
-      const validPassword = bcrypt.compareSync(sPassword, usuario.sPassword);
-
-      if (!validPassword) {
-        throw new Error("Contraseña incorrecto");
-      }
-      
-      const token = await generarJWT(usuario.nId01Usuario, usuario.sName);
+      });
 
       const perfilNombres = usuario.perfilesUsuario.map(item => item.perfil.sNombre);
 
       return {
-        uid: usuario.nId01Usuario,
-        perfil: perfilNombres, // Aquí tienes solo los nombres de los perfiles
-        token,
-      };
+        perfil : perfilNombres
+      }
 }
+
+const obtenerPermisosUsuario = async (id) => {
+  // Obtener el perfil del usuario
+  const perfil = await prisma.BP_04_PERFIL_USUARIO.findFirst({
+    where: {
+      nId01Usuario: id,
+    },
+  });
+
+  if (!perfil) return [];
+
+  // Obtener todos los permisos asociados al perfil
+  const permisos = await prisma.bP_05_PERFIL_PERMISO.findMany({
+    where: {
+      nId02Perfil: perfil.nId02Perfil,
+    },
+    include: {
+      permiso: true, // esto incluye los datos del permiso desde la tabla relacionada
+    },
+  });
+
+  // Retornar una lista de permisos ya lista para validar
+  return permisos.map(p => ({
+    sModulo: p.permiso.sNombre,
+    nLeer: p.permiso.nLeer,
+    nCrear: p.permiso.nCrear,
+    nEditar: p.permiso.nEditar,
+    nBorrar: p.permiso.nBorrar,
+  }));
+};
+
+
 module.exports = {
-    getAllUsuarios,
-    newUsuario,
-    revalidarToken,
-    loginUsuario
+    obtenerUsuarios,
+    obtenerUsuarioPorId,
+    obtenerPerfilUsuario,
+    obtenerPermisosUsuario
 }
