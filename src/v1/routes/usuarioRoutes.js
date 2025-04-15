@@ -10,7 +10,7 @@ router
 	.get("/",
 		validarJWT,
 		validarPerfil(['ADMINISTRADOR']),
-		validarPermiso('USUARIOS', 'nLeer'),
+		// validarPermiso('USUARIOS', 'nLeer'),
 		usuarioController.obtenerUsuarios)
 
 module.exports = router;
