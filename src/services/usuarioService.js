@@ -78,10 +78,10 @@ const obtenerPermisosUsuario = async (id) => {
   // Retornar una lista de permisos ya lista para validar
   return permisos.map(p => ({
     sModulo: p.permiso.sNombre,
-    nLeer: p.permiso.nLeer,
-    nCrear: p.permiso.nCrear,
-    nEditar: p.permiso.nEditar,
-    nBorrar: p.permiso.nBorrar,
+    nLeer: p.nLeer,
+    nCrear: p.nCrear,
+    nEditar: p.nEditar,
+    nBorrar: p.nBorrar,
   }));
 };
 

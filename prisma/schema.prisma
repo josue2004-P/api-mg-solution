@@ -45,10 +45,6 @@ model BP_03_PERMISO {
   nId03Permiso Int        @id @default(autoincrement())
   sNombre String @unique
   sDescripcion String
-  nLeer Boolean @default(false)
-  nCrear Boolean @default(false)
-  nEditar Boolean @default(false)
-  nBorrar Boolean @default(false)
   dFechaCreacion     DateTime  @default(now())  // Sin el signo de ? para que no sea opcional
   dFechaActualizacion DateTime?
 
@@ -62,7 +58,6 @@ model BP_04_PERFIL_USUARIO {
   nId02Perfil Int
   dFechaCreacion     DateTime  @default(now())  // Sin el signo de ? para que no sea opcional
   dFechaActualizacion DateTime?
-
   usuario             BP_01_USUARIO      @relation("UsuarioPerfiles", fields: [nId01Usuario], references: [nId01Usuario])
   perfil              BP_02_PERFIL       @relation("PerfilUsuarios", fields: [nId02Perfil], references: [nId02Perfil])
 }
@@ -71,6 +66,10 @@ model BP_05_PERFIL_PERMISO {
   nId05PerfilPermiso Int        @id @default(autoincrement())
   nId03Permiso Int
   nId02Perfil Int
+  nLeer Boolean @default(false)
+  nCrear Boolean @default(false)
+  nEditar Boolean @default(false)
+  nBorrar Boolean @default(false)
   dFechaCreacion     DateTime  @default(now())  // Sin el signo de ? para que no sea opcional
   dFechaActualizacion DateTime?
 
