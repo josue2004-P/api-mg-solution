@@ -3,11 +3,22 @@ const bcrypt = require("bcryptjs");
 const { generarJWT } = require("../helpers/jwt");
 const jwt = require("jsonwebtoken");
 
-
 const prisma = getPrisma(); 
 
+// OBTENER NOMBRES COMPLETOS
+function agregarNombreCompleto(usuarios) {
+  return usuarios.map(usuario => ({
+    ...usuario,
+    sNombreCompleto: obtenerNombreCompleto(usuario),
+  }));
+}
+
+function obtenerNombreCompleto(usuario) {
+  return `${usuario.sNombre} ${usuario.sApellidoPaterno} ${usuario.sApellidoMaterno}`;
+}
+
 const obtenerUsuarios = async () => {
-  const usuarios = await prisma.BP_01_USUARIO.findMany({
+  const usuariosObtenidos = await prisma.BP_01_USUARIO.findMany({
     select: {
       nId01Usuario: true,
       sUsuario: true,
@@ -17,9 +28,10 @@ const obtenerUsuarios = async () => {
       sEmail: true,
       bActivo: true,
       dFechaCreacion:true
-      // No incluyas sContrasena ni bActivo
     },
   });
+
+  const usuarios = agregarNombreCompleto(usuariosObtenidos);
   return usuarios;
 };
 
