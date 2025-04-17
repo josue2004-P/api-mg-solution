@@ -40,9 +40,7 @@ const obtenerPermisos = async () => {
     throw new Error('No existen permisos registrados');
   }
 
-  return {
-      permisos
-  };
+  return permisos;
 }
 
 //OBTENER PERMISO POR ID

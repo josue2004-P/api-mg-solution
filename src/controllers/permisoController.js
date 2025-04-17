@@ -43,9 +43,7 @@ const consultarPermisos = async (req,res) => {
         res.status(201).send({
             status: "Ok",
             message: "Permisos obtenidos correctamente",
-            data: {
-                permisos,    
-            },
+            data: permisos
         });
 
     } catch (error) {

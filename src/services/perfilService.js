@@ -39,9 +39,7 @@ const obtenerPerfiles = async () => {
     throw new Error('No existen perfiles registrados');
   }
 
-  return {
-    perfiles
-  };
+  return perfiles;
 }
 
 //OBTENER PERMISO POR ID

@@ -38,14 +38,12 @@ const crearPerfil = async (req,res) => {
 const consultarPerfiles = async (req,res) => {
     try {
 
-        const permisos = await perfilService.obtenerPerfiles();
+        const perfiles = await perfilService.obtenerPerfiles();
         
         res.status(201).send({
             status: "Ok",
             message: "Perfiles obtenidos correctamente",
-            data: {
-                permisos,    
-            },
+            data:perfiles,
         });
 
     } catch (error) {
