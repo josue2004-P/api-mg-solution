@@ -6,11 +6,22 @@ const jwt = require("jsonwebtoken");
 
 const prisma = getPrisma(); 
 
-const obtenerUsuarios = async () =>{
-
-    const usuarios = await prisma.BP_01_USUARIO.findMany();
-    return usuarios;
-}
+const obtenerUsuarios = async () => {
+  const usuarios = await prisma.BP_01_USUARIO.findMany({
+    select: {
+      nId01Usuario: true,
+      sUsuario: true,
+      sNombre: true,
+      sApellidoPaterno: true,
+      sApellidoMaterno: true,
+      sEmail: true,
+      bActivo: true,
+      dFechaCreacion:true
+      // No incluyas sContrasena ni bActivo
+    },
+  });
+  return usuarios;
+};
 
 //OBTENER PERMISO POR ID
 const obtenerUsuarioPorId = async (id) => {
