@@ -28,14 +28,39 @@ const nuevoPerfil = async (sNombre, sDescripcion) => {
 };
 
 //OBTENER TODOS LOS PERMISOS
-const obtenerPerfiles = async () => {
-  const perfiles = await prisma.BP_02_PERFIL.findMany();
+const obtenerPerfiles = async ({ sNombre, page, limit }) => {
+  const where = {};
 
-  if (!perfiles || perfiles.length == 0) {
-    throw new Error("No existen perfiles registrados");
+  if (sNombre) {
+    where.sNombre = {
+      contains: sNombre,
+    };
   }
 
-  return perfiles;
+  const skip = (page - 1) * limit;
+
+  const [total, perfiles] = await Promise.all([
+    prisma.BP_02_PERFIL.count({ where }),
+    prisma.BP_02_PERFIL.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: {
+        nId02Perfil: "asc",
+      },
+    }),
+  ]);
+
+  if (!perfiles || perfiles.length == 0) {
+    throw new Error("No existen perfiles registrados ");
+  }
+
+  return {
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+    perfiles,
+  };
 };
 
 //OBTENER PERMISO POR ID
