@@ -7,14 +7,12 @@ const crearPerfil = async (req,res) => {
 
     try {
 
-        const { perfil } = await perfilService.nuevoPerfil(sNombre,sDescripcion);
+        const data = await perfilService.nuevoPerfil(sNombre,sDescripcion);
         
         res.status(201).send({
             status: "Ok",
             message: "Perfil creado exitosamente",
-            data: {
-                perfil,
-            },
+            data
         });
     } catch (error) {
         // Si el error es por correo ya registrado
@@ -71,9 +69,7 @@ const consultarPerfilPorId = async (req,res) => {
         res.status(201).send({
             status: "Ok",
             message: "Perfil obtenido correctamente",
-            data: {
-                perfil,    
-            },
+            data:perfil,    
         });
 
     } catch (error) {
@@ -102,10 +98,8 @@ const editarPerfilPorId = async (req,res) => {
         
         res.status(201).send({
             status: "Ok",
-            message: "Perfil editado correctamente",
-            data: {
-                perfil,    
-            },
+            message: `Perfil ${perfil.sNombre} editado correctamente`,
+            data: perfil,    
         });
 
     } catch (error) {
@@ -132,10 +126,8 @@ const eliminarPerfilPorId = async (req,res) => {
         
         res.status(201).send({
             status: "Ok",
-            message: "Perfil eliminado correctamente",
-            data: {
-                perfil,    
-            },
+            message:  `Perfil ${perfil.sNombre} eliminado correctamente`,
+            data: perfil,    
         });
 
     } catch (error) {
