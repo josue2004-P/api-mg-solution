@@ -7,14 +7,12 @@ const crearPermiso = async (req,res) => {
 
     try {
 
-        const { permiso } = await permisoService.nuevoPermiso(sNombre,sDescripcion );
+        const data = await permisoService.nuevoPermiso(sNombre,sDescripcion );
         
         res.status(201).send({
             status: "Ok",
             message: "Permiso creado exitosamente",
-            data: {
-                permiso,
-            },
+            data
         });
     } catch (error) {
         // Si el error es por correo ya registrado
@@ -36,9 +34,17 @@ const crearPermiso = async (req,res) => {
 }
 
 const consultarPermisos = async (req,res) => {
+    const { sNombre, page = 1, limit = 5 } = req.query;
+
+    const filtros = {
+        sNombre,
+        page: parseInt(page),
+        limit: parseInt(limit),
+      };
+
     try {
 
-        const permisos = await permisoService.obtenerPermisos();
+        const permisos = await permisoService.obtenerPermisos(filtros);
         
         res.status(201).send({
             status: "Ok",
@@ -71,9 +77,7 @@ const consultarPermisoPorId = async (req,res) => {
         res.status(201).send({
             status: "Ok",
             message: "Permiso obtenidos correctamente",
-            data: {
-                permiso,    
-            },
+            data: permiso,    
         });
 
     } catch (error) {

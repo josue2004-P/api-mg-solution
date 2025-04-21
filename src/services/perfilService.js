@@ -2,6 +2,7 @@ const { getPrisma } = require("../database/prisma");
 
 const prisma = getPrisma();
 
+// CREAR PERFIL
 const nuevoPerfil = async (sNombre, sDescripcion) => {
   let perfilPorNombre = await prisma.BP_02_PERFIL.findFirst({
     where: {
@@ -27,7 +28,7 @@ const nuevoPerfil = async (sNombre, sDescripcion) => {
   };
 };
 
-//OBTENER TODOS LOS PERMISOS
+//OBTENER TODOS LOS perfiles
 const obtenerPerfiles = async ({ sNombre, page, limit }) => {
   const where = {};
 
@@ -63,7 +64,7 @@ const obtenerPerfiles = async ({ sNombre, page, limit }) => {
   };
 };
 
-//OBTENER PERMISO POR ID
+//OBTENER PERFIL POR ID
 const obtenerPerfilPorId = async (id) => {
   const perfil = await prisma.BP_02_PERFIL.findUnique({
     where: {
@@ -78,7 +79,7 @@ const obtenerPerfilPorId = async (id) => {
   return perfil;
 };
 
-//EDITAR PERMISO POR ID
+//EDITAR PERFIL POR ID
 const editarPerfilPorId = async (id, data) => {
   const perfilExistente = await prisma.BP_02_PERFIL.findUnique({
     where: { nId02Perfil: id },
@@ -104,7 +105,7 @@ const editarPerfilPorId = async (id, data) => {
   return perfilActualizado;
 };
 
-//ELIMINAR PERMISO POR ID
+//ELIMINAR PERFIL POR ID
 const eliminarPerfilPorId = async (id) => {
   const perfilExistente = await prisma.BP_02_PERFIL.findUnique({
     where: { nId02Perfil: id },
