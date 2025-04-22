@@ -31,13 +31,13 @@ const crearPerfil = async (req, res) => {
 };
 
 const consultarPerfiles = async (req, res) => {
-    const { sNombre, page = 1, limit = 5 } = req.query;
+  const { sNombre, page = 1, limit = 5 } = req.query;
 
-    const filtros = {
-      sNombre,
-      page: parseInt(page),
-      limit: parseInt(limit),
-    };
+  const filtros = {
+    sNombre,
+    page: parseInt(page),
+    limit: parseInt(limit),
+  };
 
   try {
     const perfiles = await perfilService.obtenerPerfiles(filtros);
