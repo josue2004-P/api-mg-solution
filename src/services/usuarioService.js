@@ -60,6 +60,7 @@ const obtenerUsuarioPorId = async (id) => {
       nId01Usuario: id,
     },
     select: {
+      nId01Usuario:true,
       sNombre: true,
       sApellidoPaterno: true,
       sApellidoMaterno: true,

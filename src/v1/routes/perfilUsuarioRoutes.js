@@ -6,9 +6,6 @@ const { validarPerfil } = require("../../middlewares/validar-perfil");
 
 router
 	.post("/",validarJWT,validarPerfil(['ADMINISTRADOR']),perfilUsuarioController.crearPerfilUsuario)
-	// .get("/",permisoController.crearUsuario)
-	// .get("/:id",validarJWT, permisoController.revalidarToken)
-	// .put("/:id",validarJWT, permisoController.revalidarToken)
-	// .delete("/:id",validarJWT, permisoController.revalidarToken)
+	.get("/:id",validarJWT,validarPerfil(['ADMINISTRADOR']), perfilUsuarioController.obtenerPerfilesPorIdUsuario)
 
 module.exports = router;
