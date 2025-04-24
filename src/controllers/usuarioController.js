@@ -35,12 +35,15 @@ const obtenerUsuarios = async (req,res) => {
   }
 }
 
+
+
 const crearUsuario = async (req,res) => {
 
     const {sNombre,sApellidoPaterno,sApellidoMaterno,sUsuario,sEmail,sPassword} = req.body;
+    const imagen = req.file; // multer agrega este objeto si se subió imagen
 
     try {
-
+        const rutaImagen = imagen ? `/uploads/usuarios/${imagen.filename}` : null;
         const data = await usuarioService.crearUsuario(sNombre,sApellidoPaterno,sApellidoMaterno,sUsuario,sEmail,sPassword );
         
         res.status(201).send({
