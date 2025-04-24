@@ -31,6 +31,17 @@ const obtenerUsuarios = async ({ sNombre, page, limit }) => {
     prisma.bP_01_USUARIO.count({ where }),
     prisma.bP_01_USUARIO.findMany({
       where,
+      select:{
+        nId01Usuario:true,
+        sNombre: true,
+        sApellidoPaterno: true,
+        sApellidoMaterno: true,
+        sUsuario: true,
+        sEmail: true,
+        sUsuarioImg: true,
+        bActivo: true,
+        dFechaCreacion: true,
+      },
       skip,
       take: limit,
       orderBy: {
@@ -142,7 +153,8 @@ const crearUsuario = async (
   sApellidoMaterno,
   sUsuario,
   sEmail,
-  sPassword
+  sPassword,
+  usuarioImagen
 ) => {
   let usuarioPorEmail = await prisma.BP_01_USUARIO.findFirst({
     where: {
@@ -177,6 +189,7 @@ const crearUsuario = async (
       sUsuario: sUsuario,
       sEmail: sEmail,
       sPassword: newPassword,
+      sUsuarioImg: usuarioImagen || null, 
     },
     select: {
       sNombre: true,

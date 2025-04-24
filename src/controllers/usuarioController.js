@@ -1,5 +1,6 @@
 const usuarioService = require("../services/usuarioService")
 const {toInt} = require("../helpers/toInt")
+const {getRutaPublica} = require("../helpers/getRutaPublica")
 
 const obtenerUsuarios = async (req,res) => {
 
@@ -35,21 +36,20 @@ const obtenerUsuarios = async (req,res) => {
   }
 }
 
-
-
 const crearUsuario = async (req,res) => {
 
     const {sNombre,sApellidoPaterno,sApellidoMaterno,sUsuario,sEmail,sPassword} = req.body;
-    const imagen = req.file; // multer agrega este objeto si se subió imagen
+    const archivoFile2 = req.file;
+    
+    const usuarioImagen = archivoFile2 ? getRutaPublica(archivoFile2.path) : null
 
     try {
-        const rutaImagen = imagen ? `/uploads/usuarios/${imagen.filename}` : null;
-        const data = await usuarioService.crearUsuario(sNombre,sApellidoPaterno,sApellidoMaterno,sUsuario,sEmail,sPassword );
+        const data = await usuarioService.crearUsuario(sNombre,sApellidoPaterno,sApellidoMaterno,sUsuario,sEmail,sPassword,usuarioImagen);
         
         res.status(201).send({
             status: "Ok",
             message: "Usuario creado exitosamente",
-            data,
+            // data,
         });
     } catch (error) {
         // Si el error es por correo ya registrado

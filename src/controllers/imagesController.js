@@ -6,7 +6,7 @@ const consultarImagenes = async (req, res) => {
   const nombreArchivo = req.params.nombre;
 
   try {
-    const ruta = path.join(__dirname, "../../public/images", nombreArchivo);
+    const ruta = path.join(__dirname, "../../public/images/usuarios", nombreArchivo);
 
     // Verificar si el archivo existe
     if (!fs.existsSync(ruta)) {

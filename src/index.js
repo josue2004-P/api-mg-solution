@@ -29,7 +29,7 @@ app.use("/api/v1/apiExterna", v1ApiExternaRouter);
 // Ruta para ver PDFs (verifica autenticación)
 app.use("/api/v1/pdfs", v1PdfsRouter);
 // IMAGENES
-app.use("/api/v1/images", v1ImagesRouter);
+app.use("/api/v1/images/usuarios", v1ImagesRouter);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puesto ${PORT}`);

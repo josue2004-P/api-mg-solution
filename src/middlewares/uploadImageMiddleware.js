@@ -6,6 +6,8 @@ const fs = require('fs');
 const getDestinationPath = (fieldname) => {
   if (fieldname === 'imagen1') {
     return path.join(__dirname, '../../public/images/img1');
+  }else if(fieldname === 'usuarioImagen'){
+    return path.join(__dirname, '../../public/images/usuarios');
   }
   return path.join(__dirname, '../../public/images');
 };
