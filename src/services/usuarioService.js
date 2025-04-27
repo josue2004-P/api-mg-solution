@@ -16,7 +16,6 @@ function obtenerNombreCompleto(usuario) {
 }
 
 const obtenerUsuarios = async ({ sNombre, page, limit }) => {
-
   const where = {};
 
   if (sNombre) {
@@ -31,8 +30,8 @@ const obtenerUsuarios = async ({ sNombre, page, limit }) => {
     prisma.bP_01_USUARIO.count({ where }),
     prisma.bP_01_USUARIO.findMany({
       where,
-      select:{
-        nId01Usuario:true,
+      select: {
+        nId01Usuario: true,
         sNombre: true,
         sApellidoPaterno: true,
         sApellidoMaterno: true,
@@ -60,7 +59,7 @@ const obtenerUsuarios = async ({ sNombre, page, limit }) => {
     total,
     page,
     totalPages: Math.ceil(total / limit),
-    usuarios
+    usuarios,
   };
 };
 
@@ -71,7 +70,7 @@ const obtenerUsuarioPorId = async (id) => {
       nId01Usuario: id,
     },
     select: {
-      nId01Usuario:true,
+      nId01Usuario: true,
       sNombre: true,
       sApellidoPaterno: true,
       sApellidoMaterno: true,
@@ -189,7 +188,7 @@ const crearUsuario = async (
       sUsuario: sUsuario,
       sEmail: sEmail,
       sPassword: newPassword,
-      sUsuarioImg: usuarioImagen || null, 
+      sUsuarioImg: usuarioImagen || null,
     },
     select: {
       sNombre: true,
@@ -233,6 +232,15 @@ const editarUsuarioPorId = async (id, data) => {
     throw new Error("No existe el usuario");
   }
 
+  // Si el password viene vacío, lo eliminamos del objeto
+  if (data.sPassword.trim() === "") {
+    delete data.sPassword;
+  } else {
+    // Encriptar contraseña
+    const salt = bcrypt.genSaltSync();
+    data.sPassword = bcrypt.hashSync(data.sPassword, salt);
+  }
+
   const usuarioActualizado = await prisma.bP_01_USUARIO.update({
     where: {
       nId01Usuario: id,
@@ -241,6 +249,7 @@ const editarUsuarioPorId = async (id, data) => {
       sNombre: data.sNombre,
       sApellidoPaterno: data.sApellidoPaterno, // Asegúrate de que 'data' tenga ese campo
       sApellidoMaterno: data.sApellidoMaterno,
+      sPassword: data.sPassword,
     },
     select: {
       sNombre: true,

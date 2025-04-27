@@ -130,7 +130,7 @@ const editarUsuarioPorId = async (req,res) => {
     try {
         const id = toInt(req.params.id);
         const data = req.body;
-
+        
         const permiso = await usuarioService.editarUsuarioPorId(id,data);
         
         res.status(201).send({
