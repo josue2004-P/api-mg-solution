@@ -20,6 +20,11 @@ PROYECTO ELABORADO PARA BASE DE NUEVOS PROYECTOS CON BUENAS PRATICAS
 
 3. CAMBIAR EL .env.example a .env:
 
-4. Ya con el contenedor iniciado y las dependencias instalada arrancar el servidor:
+4. GENERAR CONEXION
+
+npx prisma generate
+
+5. Ya con el contenedor iniciado y las dependencias instalada 
+arrancar el servidor:
    ```bash
     npm run dev
