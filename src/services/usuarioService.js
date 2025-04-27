@@ -155,6 +155,7 @@ const crearUsuario = async (
   sPassword,
   usuarioImagen
 ) => {
+  
   let usuarioPorEmail = await prisma.BP_01_USUARIO.findFirst({
     where: {
       sEmail: sEmail,
