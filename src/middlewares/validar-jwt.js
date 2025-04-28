@@ -12,6 +12,9 @@ const validarJWT = async (req, res = response, next) => {
     });
   }
 
+
+  next();
+
 };
 
 module.exports = {

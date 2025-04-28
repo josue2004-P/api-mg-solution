@@ -5,6 +5,7 @@ const crearPermiso = async (req,res) => {
 
     const {sNombre,sDescripcion} = req.body;
 
+
     try {
 
         const data = await permisoService.nuevoPermiso(sNombre,sDescripcion );
