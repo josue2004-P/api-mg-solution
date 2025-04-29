@@ -6,7 +6,7 @@ const { validarPerfil } = require("../../middlewares/validar-perfil");
 const upload = require('../../middlewares/uploadImageMiddleware');
 
 router
-	.get("/:nombre",validarJWT,validarPerfil(['ADMINISTRADOR']),imagesController.consultarImagenes)
+	.get("/usuarios/:nombre",imagesController.consultarImagenes)
 	.post("/",
 		validarJWT,validarPerfil(['ADMINISTRADOR']),
 		upload.fields([
