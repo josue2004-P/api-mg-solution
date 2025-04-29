@@ -5,7 +5,17 @@ const { validarJWT } = require("../../middlewares/validar-jwt");
 const { validarPerfil } = require("../../middlewares/validar-perfil");
 
 router
-	.post("/",validarJWT,validarPerfil(['ADMINISTRADOR']),perfilUsuarioController.crearPerfilUsuario)
-	.get("/:id",validarJWT,validarPerfil(['ADMINISTRADOR']), perfilUsuarioController.obtenerPerfilesPorIdUsuario)
+  .post(
+    "/",
+    validarJWT,
+    validarPerfil(["ADMINISTRADOR"]),
+    perfilUsuarioController.crearPerfilUsuario
+  )
+  .get(
+    "/:id",
+    validarJWT,
+    validarPerfil(["ADMINISTRADOR"]),
+    perfilUsuarioController.obtenerPerfilesPorIdUsuario
+  );
 
 module.exports = router;

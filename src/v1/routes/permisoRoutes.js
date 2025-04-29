@@ -41,6 +41,14 @@ router
   )
   .put(
     "/:id",
+    [
+      body("sDescripcion")
+        .notEmpty()
+        .withMessage("La descripción es obligatorio.")
+        .isLength({ min: 4 })
+        .withMessage("La descripción debe tener al menos 10 caracteres."),
+      validarCampos,
+    ],
     validarJWT,
     validarPerfil(["ADMINISTRADOR"]),
     permisoController.editarPermisoPorId
