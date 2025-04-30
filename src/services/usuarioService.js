@@ -1,5 +1,7 @@
 const { getPrisma } = require("../database/prisma");
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
 
 const prisma = getPrisma();
 
@@ -78,6 +80,7 @@ const obtenerUsuarioPorId = async (id) => {
       dFechaCreacion: true,
       bActivo: true,
       sUsuario: true,
+      sUsuarioImg: true,
     },
   });
 
@@ -155,7 +158,6 @@ const crearUsuario = async (
   sPassword,
   usuarioImagen
 ) => {
-  
   let usuarioPorEmail = await prisma.BP_01_USUARIO.findFirst({
     where: {
       sEmail: sEmail,
@@ -233,13 +235,24 @@ const editarUsuarioPorId = async (id, data) => {
     throw new Error("No existe el usuario");
   }
 
-  // Si el password viene vacío, lo eliminamos del objeto
-  if (data.sPassword.trim() === "") {
-    delete data.sPassword;
-  } else {
+  if (usuarioExistente.sUsuarioImg && data.usuarioImagen) {
+    const filePath = path.join(
+      __dirname,
+      "../../public/images/usuarios",
+      usuarioExistente.sUsuarioImg
+    );
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath); // Elimina el archivo
+    }
+  }
+
+  if (data.sPassword && data.sPassword.trim() !== "") {
     // Encriptar contraseña
     const salt = bcrypt.genSaltSync();
     data.sPassword = bcrypt.hashSync(data.sPassword, salt);
+  } else {
+    // Si no existe o está vacía, eliminarla del objeto
+    delete data.sPassword;
   }
 
   const usuarioActualizado = await prisma.bP_01_USUARIO.update({
@@ -251,11 +264,13 @@ const editarUsuarioPorId = async (id, data) => {
       sApellidoPaterno: data.sApellidoPaterno, // Asegúrate de que 'data' tenga ese campo
       sApellidoMaterno: data.sApellidoMaterno,
       sPassword: data.sPassword,
+      sUsuarioImg: data.usuarioImagen || usuarioExistente.sUsuarioImg,
     },
     select: {
       sNombre: true,
       sApellidoPaterno: true,
       sApellidoMaterno: true,
+      sUsuarioImg: true,
     },
   });
 

@@ -2,7 +2,7 @@ const usuarioService = require("../services/usuarioService");
 const { toInt } = require("../helpers/toInt");
 const { getRutaPublica } = require("../helpers/getRutaPublica");
 const fs = require("fs");
-const path = require('path');
+const path = require("path");
 
 const obtenerUsuarios = async (req, res) => {
   const { sNombre, page = 1, limit = 5 } = req.query;
@@ -50,7 +50,6 @@ const crearUsuario = async (req, res) => {
 
   const archivoFile2 = req.file;
   const usuarioImagen = archivoFile2 ? path.basename(archivoFile2.path) : null;
- 
 
   try {
     const data = await usuarioService.crearUsuario(
@@ -144,9 +143,17 @@ const eliminarUsuarioPorId = async (req, res) => {
 };
 
 const editarUsuarioPorId = async (req, res) => {
+  const filePath = req.file?.path; // Ruta del archivo subido (si hay)
+
   try {
     const id = toInt(req.params.id);
     const data = req.body;
+
+    const archivoFile2 = req.file;
+    const usuarioImagen = archivoFile2
+      ? path.basename(archivoFile2.path)
+      : null;
+    data.usuarioImagen = usuarioImagen;
 
     const permiso = await usuarioService.editarUsuarioPorId(id, data);
 
@@ -158,6 +165,12 @@ const editarUsuarioPorId = async (req, res) => {
       },
     });
   } catch (error) {
+    // Si hay un error y se subió una imagen, eliminarla
+    if (filePath && fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath); // Elimina el archivo
+    }
+
+    console.log(error)
     if (error.message) {
       res.status(400).send({
         status: "Error",
