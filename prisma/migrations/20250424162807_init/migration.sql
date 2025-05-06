@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `BP_01_USUARIO` MODIFY `sUsuarioImg` VARCHAR(191) NULL;
