@@ -15,7 +15,7 @@ model BP_01_USUARIO {
   sUsuario            String                 @unique
   sEmail              String                 @unique
   sPassword           String
-  bActivo             Boolean                @default(false)
+  bInactivo             Boolean                @default(false)
   dFechaCreacion      DateTime               @default(now())
   dFechaActualizacion DateTime?
   sUsuarioImg         String?

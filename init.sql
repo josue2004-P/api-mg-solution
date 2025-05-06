@@ -30,7 +30,7 @@ CREATE TABLE `BP_01_USUARIO` (
   `sUsuario` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `sEmail` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `sPassword` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `bActivo` tinyint(1) NOT NULL DEFAULT '0',
+  `bInactivo` tinyint(1) NOT NULL DEFAULT '0',
   `dFechaCreacion` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `dFechaActualizacion` datetime(3) DEFAULT NULL,
   `sUsuarioImg` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,

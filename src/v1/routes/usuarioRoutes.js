@@ -89,11 +89,17 @@ router
     validarPerfil(["ADMINISTRADOR"]),
     usuarioController.editarUsuarioPorId
   )
-  .delete(
-    "/:id",
+  .put(
+    "/:id/desactivar",
     validarJWT,
     validarPerfil(["ADMINISTRADOR"]),
-    usuarioController.eliminarUsuarioPorId
+    usuarioController.desactivarUsuarioPorId
+  )
+  .put(
+    "/:id/activar",
+    validarJWT,
+    validarPerfil(["ADMINISTRADOR"]),
+    usuarioController.activarUsuarioPorId
   );
 
 module.exports = router;
