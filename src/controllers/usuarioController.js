@@ -3,8 +3,7 @@ const { toInt } = require("../helpers/toInt");
 const { getRutaPublica } = require("../helpers/getRutaPublica");
 const fs = require("fs");
 const path = require("path");
-const { PDFDocument } = require('pdf-lib');
-
+const PDFDocument = require("pdfkit");
 
 const obtenerUsuarios = async (req, res) => {
   const { sNombre, page = 1, limit = 5 } = req.query;
@@ -239,43 +238,27 @@ const generarPdf = async (req, res) => {
   if (!Array.isArray(data)) {
     return res.status(400).send("El body debe ser un arreglo de objetos");
   }
+  // Crea un nuevo documento PDF
+  const doc = new PDFDocument();
 
-  try {
-    // Crea un documento PDF
-    const pdfDoc = await PDFDocument.create();
+  // Configura la respuesta para descargar el PDF
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", 'attachment; filename="output.pdf"');
 
-    // Agrega una página
-    const page = pdfDoc.addPage([600, 400]);
+  // Pipe el PDF generado a la respuesta
+  doc.pipe(res);
 
-    // Establece la fuente
-    const font = await pdfDoc.embedStandardFont('Helvetica');
+  // Título del documento
+  doc.fontSize(18).text("Lista de Usuarios", { align: "center" });
+  doc.moveDown();
 
-    // Escribe los datos en el PDF
-    let yPosition = 350;
-    data.forEach(person => {
-      page.drawText(`Nombre: ${person.Nombre} | Edad: ${person.Edad}`, {
-        x: 50,
-        y: yPosition,
-        font,
-        size: 12
-      });
-      yPosition -= 20;
-    });
+  // Escribe los datos en el PDF
+  data.forEach((person) => {
+    doc.fontSize(12).text(`Nombre: ${person.Nombre} | Edad: ${person.Edad}`);
+  });
 
-    // Guarda el archivo PDF localmente
-    const pdfBytes = await pdfDoc.save();
-    fs.writeFileSync('output.pdf', pdfBytes);
-    console.log('PDF guardado exitosamente como output.pdf');
-
-    // Envía el archivo PDF como respuesta
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
-    res.send(pdfBytes);
-
-  } catch (error) {
-    console.error('Error al generar el PDF:', error);
-    res.status(500).send('Error al generar el PDF.');
-  }
+  // Finaliza el documento
+  doc.end();
 };
 
 module.exports = {

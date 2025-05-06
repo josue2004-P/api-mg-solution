@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
 const XLSX = require("xlsx");
-const { PDFDocument } = require('pdf-lib');
 
 const prisma = getPrisma();
 
