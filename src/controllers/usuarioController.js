@@ -233,36 +233,17 @@ const generarExcel = async (req, res) => {
 };
 
 const generarPdf = async (req, res) => {
-  const data = req.body;
 
-  if (!Array.isArray(data)) {
-    return res.status(400).send("El body debe ser un arreglo de objetos");
-  }
-  // Crea un nuevo documento PDF
-  const doc = new PDFDocument();
+  const data = req.body
 
-  // Configura la respuesta para descargar el PDF
+  const stream = await usuarioService.generarPdf(data);
   res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", 'attachment; filename="output.pdf"');
-
-  // Pipe el PDF generado a la respuesta
-  doc.pipe(res);
-
-  // Título del documento
-  doc.fontSize(18).text("Lista de Usuarios", { align: "center" });
-  doc.moveDown();
-
-  // Escribe los datos en el PDF
-  data.forEach((person) => {
-    doc.fontSize(12).text(`Nombre: ${person.Nombre} | Edad: ${person.Edad}`);
-  });
-
-  // Finaliza el documento
-  doc.end();
+  res.setHeader("Content-Disposition", 'attachment; filename="vale_almacen.pdf"');
+  stream.pipe(res);
 };
 
 module.exports = {
-  obtenerUsuarios,
+  obtenerUsuarios,  
   crearUsuario,
   obtenerUsuarioPorId,
   editarUsuarioPorId,

@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
 const XLSX = require("xlsx");
+const PDFDocument = require("pdfkit");
+const { PassThrough } = require("stream");
 
 const prisma = getPrisma();
 
@@ -324,30 +326,48 @@ const generarExcel = async (data) => {
 };
 
 const generarPdf = async (data) => {
-  // Crea un documento PDF
-  const pdfDoc = await PDFDocument.create();
+  const doc = new PDFDocument();
+  const stream = new PassThrough();
+  doc.pipe(stream);
 
-  // Agrega una página
-  const page = pdfDoc.addPage([600, 400]);
+  // Título del documento
+  doc.fontSize(20).text("Listado de Usuarios", { align: "center" }).moveDown();
 
-  // Establece la fuente
-const font = await pdfDoc.embedStandardFont('Helvetica');
+  // Estilo de la tabla
+  const cellHeight = 30;
+  const cols = [
+    { title: "Nombre", width: 250 },
+    { title: "Edad", width: 100 },
+  ];
 
-  // Escribe los datos en el PDF
-  let yPosition = 350; // Posición inicial en el eje Y
-  data.forEach((person) => {
-    page.drawText(`Nombre: ${person.Nombre} | Edad: ${person.Edad}`, {
-      x: 50,
-      y: yPosition,
-      font,
-      size: 12,
-    });
-    yPosition -= 20; // Espaciado entre cada línea
+  let startX = 50;
+  let startY = doc.y;
+
+  // Encabezado de la tabla
+  cols.forEach((col) => {
+    doc.rect(startX, startY, col.width, cellHeight).stroke();
+    doc.font('Helvetica-Bold').fontSize(15).text(col.title, startX + 5, startY + 10);
+    startX += col.width;
   });
 
-  // Guarda el archivo PDF
-  const pdfBytes = await pdfDoc.save();
-  return pdfBytes;
+  startY += cellHeight;
+
+  // Mostrar los usuarios en la tabla
+  data.forEach((user) => {
+    startX = 50;
+    const valores = [user.Nombre, user.Edad.toString()];
+
+    valores.forEach((text, i) => {
+      doc.rect(startX, startY, cols[i].width, cellHeight).stroke();
+      doc.font('Helvetica').fontSize(12).text(text, startX + 5, startY + 10);
+      startX += cols[i].width;
+    });
+
+    startY += cellHeight;
+  });
+
+  doc.end();
+  return stream;
 };
 
 module.exports = {
