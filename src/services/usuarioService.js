@@ -2,6 +2,8 @@ const { getPrisma } = require("../database/prisma");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
+const XLSX = require("xlsx");
+const { PDFDocument } = require('pdf-lib');
 
 const prisma = getPrisma();
 
@@ -19,7 +21,7 @@ function obtenerNombreCompleto(usuario) {
 
 const obtenerUsuarios = async ({ sNombre, page, limit }) => {
   const where = {
-    bInactivo: false, 
+    bInactivo: false,
   };
 
   if (sNombre) {
@@ -72,7 +74,7 @@ const obtenerUsuarioPorId = async (id) => {
   const usuarioObtenido = await prisma.bP_01_USUARIO.findUnique({
     where: {
       nId01Usuario: id,
-      bInactivo: false, 
+      bInactivo: false,
     },
     select: {
       nId01Usuario: true,
@@ -221,7 +223,7 @@ const activarUsuarioPorId = async (id) => {
       nId01Usuario: id,
     },
     data: {
-      bInactivo: false
+      bInactivo: false,
     },
     select: {
       sNombre: true,
@@ -245,7 +247,7 @@ const desactivarUsuarioPorId = async (id) => {
       nId01Usuario: id,
     },
     data: {
-      bInactivo: true
+      bInactivo: true,
     },
     select: {
       sNombre: true,
@@ -254,7 +256,6 @@ const desactivarUsuarioPorId = async (id) => {
 
   return usuarioEliminado;
 };
-
 
 //EDITAR USUARIO POR ID
 const editarUsuarioPorId = async (id, data) => {
@@ -308,6 +309,48 @@ const editarUsuarioPorId = async (id, data) => {
   return usuarioActualizado;
 };
 
+const generarExcel = async (data) => {
+  // Crear una hoja de cálculo
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  // Crear un libro de Excel
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
+
+  // Guardar el archivo temporalmente
+  const filePath = "./datos.xlsx";
+  XLSX.writeFile(workbook, filePath);
+
+  return filePath;
+};
+
+const generarPdf = async (data) => {
+  // Crea un documento PDF
+  const pdfDoc = await PDFDocument.create();
+
+  // Agrega una página
+  const page = pdfDoc.addPage([600, 400]);
+
+  // Establece la fuente
+const font = await pdfDoc.embedStandardFont('Helvetica');
+
+  // Escribe los datos en el PDF
+  let yPosition = 350; // Posición inicial en el eje Y
+  data.forEach((person) => {
+    page.drawText(`Nombre: ${person.Nombre} | Edad: ${person.Edad}`, {
+      x: 50,
+      y: yPosition,
+      font,
+      size: 12,
+    });
+    yPosition -= 20; // Espaciado entre cada línea
+  });
+
+  // Guarda el archivo PDF
+  const pdfBytes = await pdfDoc.save();
+  return pdfBytes;
+};
+
 module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
@@ -316,5 +359,7 @@ module.exports = {
   crearUsuario,
   editarUsuarioPorId,
   desactivarUsuarioPorId,
-  activarUsuarioPorId
+  activarUsuarioPorId,
+  generarExcel,
+  generarPdf,
 };

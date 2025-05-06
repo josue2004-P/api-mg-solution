@@ -3,6 +3,8 @@ const { toInt } = require("../helpers/toInt");
 const { getRutaPublica } = require("../helpers/getRutaPublica");
 const fs = require("fs");
 const path = require("path");
+const { PDFDocument } = require('pdf-lib');
+
 
 const obtenerUsuarios = async (req, res) => {
   const { sNombre, page = 1, limit = 5 } = req.query;
@@ -196,7 +198,7 @@ const editarUsuarioPorId = async (req, res) => {
       fs.unlinkSync(filePath); // Elimina el archivo
     }
 
-    console.log(error)
+    console.log(error);
     if (error.message) {
       res.status(400).send({
         status: "Error",
@@ -212,6 +214,70 @@ const editarUsuarioPorId = async (req, res) => {
   }
 };
 
+const generarExcel = async (req, res) => {
+  const data = req.body;
+
+  if (!Array.isArray(data)) {
+    return res.status(400).send("El body debe ser un arreglo de objetos");
+  }
+
+  const filePath = await usuarioService.generarExcel(data);
+
+  // Enviar el archivo como respuesta
+  res.download(filePath, "datos.xlsx", (err) => {
+    if (err) {
+      console.error("Error al enviar el archivo:", err);
+    }
+    // Eliminar archivo temporal
+    fs.unlinkSync(filePath);
+  });
+};
+
+const generarPdf = async (req, res) => {
+  const data = req.body;
+
+  if (!Array.isArray(data)) {
+    return res.status(400).send("El body debe ser un arreglo de objetos");
+  }
+
+  try {
+    // Crea un documento PDF
+    const pdfDoc = await PDFDocument.create();
+
+    // Agrega una página
+    const page = pdfDoc.addPage([600, 400]);
+
+    // Establece la fuente
+    const font = await pdfDoc.embedStandardFont('Helvetica');
+
+    // Escribe los datos en el PDF
+    let yPosition = 350;
+    data.forEach(person => {
+      page.drawText(`Nombre: ${person.Nombre} | Edad: ${person.Edad}`, {
+        x: 50,
+        y: yPosition,
+        font,
+        size: 12
+      });
+      yPosition -= 20;
+    });
+
+    // Guarda el archivo PDF localmente
+    const pdfBytes = await pdfDoc.save();
+    fs.writeFileSync('output.pdf', pdfBytes);
+    console.log('PDF guardado exitosamente como output.pdf');
+
+    // Envía el archivo PDF como respuesta
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
+    res.send(pdfBytes);
+
+  } catch (error) {
+    console.error('Error al generar el PDF:', error);
+    res.status(500).send('Error al generar el PDF.');
+  }
+};
+
 module.exports = {
   obtenerUsuarios,
   crearUsuario,
@@ -219,4 +285,6 @@ module.exports = {
   editarUsuarioPorId,
   desactivarUsuarioPorId,
   activarUsuarioPorId,
+  generarExcel,
+  generarPdf,
 };

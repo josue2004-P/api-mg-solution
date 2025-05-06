@@ -82,6 +82,18 @@ router
     validarJWT,
     validarPerfil(["ADMINISTRADOR"]),
     usuarioController.activarUsuarioPorId
+  )
+  .post(
+    "/generar-excel",
+    validarJWT,
+    validarPerfil(["ADMINISTRADOR"]),
+    usuarioController.generarExcel
+  )
+  .post(
+    "/generar-pdf",
+    validarJWT,
+    validarPerfil(["ADMINISTRADOR"]),
+    usuarioController.generarPdf
   );
 
 module.exports = router;
