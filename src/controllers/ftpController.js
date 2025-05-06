@@ -1,3 +1,4 @@
+const ftpService = require("../services/ftpService");
 const ftp = require("basic-ftp");
 require("dotenv").config();
 
@@ -35,25 +36,16 @@ const rutaRaiz = async (req, res) => {
 };
 
 const descargarArchivo = async (req, res) => {
-  const client = new ftp.Client();
-  client.ftp.verbose = false;
+  const filename = req.params.filename;
+  const remotePath = `/var/www/html/vistas/img/${filename}`;
 
   try {
-    await client.access({
-      host: process.env.HOST,
-      user: process.env.USER,
-      password: process.env.PASSWORD,
-      secure: false, // true si usas FTPS
-    });
 
-    const remotePath = "/home/josue/hola.txt";
-
-    // Configura encabezados para que el navegador/Postman descargue el archivo
-    res.setHeader("Content-Disposition", "attachment; filename=hola.txt");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
     res.setHeader("Content-Type", "text/plain");
 
-    // Envía el archivo directamente al cliente (Postman) sin guardarlo en disco
-    await client.downloadTo(res, remotePath);
+    await ftpService.descargarDesdeFTP(remotePath, res);
+
   } catch (err) {
     console.error("Error al descargar archivo:", err.message);
     res.status(500).send({
@@ -61,8 +53,6 @@ const descargarArchivo = async (req, res) => {
       message: "No se pudo descargar el archivo",
       error: err.message,
     });
-  } finally {
-    client.close(); // Cierra la conexión FTP sí o sí
   }
 };
 

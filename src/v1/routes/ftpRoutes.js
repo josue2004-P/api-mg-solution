@@ -12,7 +12,7 @@ router
     ftpController.rutaRaiz
   )
   .get(
-    "/descargar-archivo",
+    "/descargar-archivo/:filename",
     validarJWT,
     validarPerfil(["ADMINISTRADOR"]),
     ftpController.descargarArchivo
