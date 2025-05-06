@@ -68,24 +68,6 @@ router
     "/:id",
     validarJWT,
     uploadImage.single("usuarioImagen"),
-    [
-      body("sNombre")
-        .notEmpty()
-        .withMessage("El nombre es obligatorio.")
-        .isLength({ min: 4 })
-        .withMessage("El nombre debe tener al menos 4 caracteres."),
-      body("sApellidoPaterno")
-        .notEmpty()
-        .withMessage("El apellido paterno es obligatorio.")
-        .isLength({ min: 4 })
-        .withMessage("El apellido paterno debe tener al menos 4 caracteres."),
-      body("sApellidoMaterno")
-        .notEmpty()
-        .withMessage("El apellido materno es obligatorio.")
-        .isLength({ min: 4 })
-        .withMessage("El apellido materno debe tener al menos 4 caracteres."),
-      validarCampos,
-    ],
     validarPerfil(["ADMINISTRADOR"]),
     usuarioController.editarUsuarioPorId
   )
