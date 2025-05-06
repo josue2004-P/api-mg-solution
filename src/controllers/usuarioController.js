@@ -116,14 +116,14 @@ const obtenerUsuarioPorId = async (req, res) => {
   }
 };
 
-const eliminarUsuarioPorId = async (req, res) => {
+const desactivarUsuarioPorId = async (req, res) => {
   try {
     const id = toInt(req.params.id);
-    const data = await usuarioService.eliminarUsuarioPorId(id);
+    const data = await usuarioService.desactivarUsuarioPorId(id);
 
     res.status(201).send({
       status: "Ok",
-      message: "Usuario eliminado correctamente",
+      message: "Usuario desactivado correctamente",
       data,
     });
   } catch (error) {
@@ -135,7 +135,33 @@ const eliminarUsuarioPorId = async (req, res) => {
     } else {
       res.status(500).send({
         status: "Error",
-        message: "Error inesperado al eliminar el usuario",
+        message: "Error inesperado al desactivar a el usuario",
+        message: error.message,
+      });
+    }
+  }
+};
+
+const activarUsuarioPorId = async (req, res) => {
+  try {
+    const id = toInt(req.params.id);
+    const data = await usuarioService.activarUsuarioPorId(id);
+
+    res.status(201).send({
+      status: "Ok",
+      message: "Usuario activado correctamente",
+      data,
+    });
+  } catch (error) {
+    if (error.message) {
+      res.status(400).send({
+        status: "Error",
+        message: error.message,
+      });
+    } else {
+      res.status(500).send({
+        status: "Error",
+        message: "Error inesperado al desactivar a el usuario",
         message: error.message,
       });
     }
@@ -190,6 +216,7 @@ module.exports = {
   obtenerUsuarios,
   crearUsuario,
   obtenerUsuarioPorId,
-  eliminarUsuarioPorId,
   editarUsuarioPorId,
+  desactivarUsuarioPorId,
+  activarUsuarioPorId,
 };

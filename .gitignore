@@ -1,4 +1,8 @@
 node_modules
 .env
+<<<<<<< HEAD
 prisma/migrations
 public/images/usuarios
+=======
+public/images
+>>>>>>> a2f59a5f8ebcec5b02eeea7cf98a9f4235d79850

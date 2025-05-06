@@ -18,7 +18,9 @@ function obtenerNombreCompleto(usuario) {
 }
 
 const obtenerUsuarios = async ({ sNombre, page, limit }) => {
-  const where = {};
+  const where = {
+    bInactivo: false, 
+  };
 
   if (sNombre) {
     where.sNombre = {
@@ -40,7 +42,7 @@ const obtenerUsuarios = async ({ sNombre, page, limit }) => {
         sUsuario: true,
         sEmail: true,
         sUsuarioImg: true,
-        bActivo: true,
+        bInactivo: true,
         dFechaCreacion: true,
       },
       skip,
@@ -70,6 +72,7 @@ const obtenerUsuarioPorId = async (id) => {
   const usuarioObtenido = await prisma.bP_01_USUARIO.findUnique({
     where: {
       nId01Usuario: id,
+      bInactivo: false, 
     },
     select: {
       nId01Usuario: true,
@@ -78,7 +81,7 @@ const obtenerUsuarioPorId = async (id) => {
       sApellidoMaterno: true,
       sEmail: true,
       dFechaCreacion: true,
-      bActivo: true,
+      bInactivo: true,
       sUsuario: true,
       sUsuarioImg: true,
     },
@@ -204,7 +207,7 @@ const crearUsuario = async (
   };
 };
 
-const eliminarUsuarioPorId = async (id) => {
+const activarUsuarioPorId = async (id) => {
   const usuarioExistente = await prisma.BP_01_USUARIO.findUnique({
     where: { nId01Usuario: id },
   });
@@ -213,9 +216,12 @@ const eliminarUsuarioPorId = async (id) => {
     throw new Error("No existe el usuario");
   }
 
-  const usuarioEliminado = await prisma.BP_01_USUARIO.delete({
+  const usuarioEliminado = await prisma.BP_01_USUARIO.update({
     where: {
       nId01Usuario: id,
+    },
+    data: {
+      bInactivo: false
     },
     select: {
       sNombre: true,
@@ -224,6 +230,31 @@ const eliminarUsuarioPorId = async (id) => {
 
   return usuarioEliminado;
 };
+
+const desactivarUsuarioPorId = async (id) => {
+  const usuarioExistente = await prisma.BP_01_USUARIO.findUnique({
+    where: { nId01Usuario: id },
+  });
+
+  if (!usuarioExistente) {
+    throw new Error("No existe el usuario");
+  }
+
+  const usuarioEliminado = await prisma.BP_01_USUARIO.update({
+    where: {
+      nId01Usuario: id,
+    },
+    data: {
+      bInactivo: true
+    },
+    select: {
+      sNombre: true,
+    },
+  });
+
+  return usuarioEliminado;
+};
+
 
 //EDITAR USUARIO POR ID
 const editarUsuarioPorId = async (id, data) => {
@@ -283,6 +314,7 @@ module.exports = {
   obtenerPerfilUsuario,
   obtenerPermisosUsuario,
   crearUsuario,
-  eliminarUsuarioPorId,
   editarUsuarioPorId,
+  desactivarUsuarioPorId,
+  activarUsuarioPorId
 };

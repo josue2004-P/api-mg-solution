@@ -28,3 +28,5 @@ npx prisma generate
 arrancar el servidor:
    ```bash
     npm run dev
+
+
