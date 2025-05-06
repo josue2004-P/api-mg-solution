@@ -94,6 +94,7 @@ const loginUsuario = async (sEmail,sPassword) => {
     const usuario = await prisma.BP_01_USUARIO.findFirst({
       where: {
         sEmail: sEmail,
+        bInactivo:false
       },
       include: {
         perfilesUsuario: {
