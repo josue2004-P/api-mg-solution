@@ -8,13 +8,13 @@ router
   .post(
     "/",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE","ADMINISTRADOR"]),
     ventaGeneralController.crearVentaGeneral
   )
   .get(
     "/:id",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE","ADMINISTRADOR"]),
     ventaGeneralController.obtenerVentaGeneral
   );
 

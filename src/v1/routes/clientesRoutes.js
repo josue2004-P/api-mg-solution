@@ -15,7 +15,7 @@ router
   .get(
     "/",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.obtenerClientes
   )
   .post(
@@ -23,63 +23,56 @@ router
     validarJWT,
     [
       body("nNoCuenta06Clientes")
-      .notEmpty()
-      .withMessage("El numero de cliente es obligatorio."),
+        .notEmpty()
+        .withMessage("El numero de cliente es obligatorio."),
       body("sNombreCliente")
         .notEmpty()
-        .withMessage("El nombre del cliente es obligatorio.")
-        .isLength({ min: 4 })
-        .withMessage("El nombre del cliente debe tener al menos 4 caracteres."),
+        .withMessage("El nombre del cliente es obligatorio."),
       body("sApellidoPaternoCliente")
         .notEmpty()
-        .withMessage("El apellido paterno del cliente es obligatorio.")
-        .isLength({ min: 4 })
-        .withMessage("El apellido paterno del cliente debe tener al menos 4 caracteres."),
+        .withMessage("El apellido paterno del cliente es obligatorio."),
       body("sApellidoMaternoCliente")
         .notEmpty()
-        .withMessage("El apellido materno del cliente es obligatorio.")
-        .isLength({ min: 4 })
-        .withMessage("El apellido materno del cliente debe tener al menos 4 caracteres."),
+        .withMessage("El apellido materno del cliente es obligatorio."),
       validarCampos,
     ],
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.crearCliente
   )
   .get(
     "/:id",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.obtenerClientePorId
   )
   .put(
     "/:id",
     validarJWT,
-    uploadImage.single("usuarioImagen"),
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.editarClientePorId
   )
   .put(
     "/:id/desactivar",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.desactivarClientePorId
   )
   .put(
     "/:id/activar",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.activarClientePorId
   )
   .post(
     "/generar-excel",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.generarExcel
   )
   .post(
     "/generar-pdf",
     validarJWT,
-    validarPerfil(["ADMINISTRADOR"]),
+    validarPerfil(["CLIENTE"]),
     clienteController.generarPdf
   );
 

@@ -176,14 +176,20 @@ const desactivarClientePorId = async (id) => {
 
 //EDITAR USUARIO POR ID
 const editarClientePorId = async (id, data) => {
+
+  const idNum = Number(id);
+
+  if (!id || isNaN(idNum)) {
+    throw new Error("El ID proporcionado no es válido.");
+  }
+
   const clienteExistente = await prisma.bP_06_CLIENTE.findUnique({
     where: { nNoCuenta06Clientes: id },
   });
 
-  if (!clienteExistente) {
-    throw new Error("No existe el cliente");
+  if (!clienteExistente || isNaN(Number(clienteExistente.nNoCuenta06Clientes))) {
+    throw new Error("No existe el cliente o el número de cuenta no es válido");
   }
-
   const clienteActualizado = await prisma.bP_06_CLIENTE.update({
     where: {
       nNoCuenta06Clientes: id,
