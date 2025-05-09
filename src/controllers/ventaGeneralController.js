@@ -2,8 +2,11 @@ const ventaGeneralService = require("../services/ventaGeneralService");
 const { toInt } = require("../helpers/toInt");
 
 const crearVentaGeneral = async (req, res) => {
+
+  const {nNoCuenta06Clientes,datos} = req.body
+
   try {
-    const data = await ventaGeneralService.crearVentaGeneral();
+    const data = await ventaGeneralService.crearVentaGeneral(nNoCuenta06Clientes,datos);
 
     res.status(201).send({
       status: "Ok",
@@ -28,14 +31,14 @@ const crearVentaGeneral = async (req, res) => {
   }
 };
 
-const obtenerPerfilesPorIdUsuario = async (req, res) => {
+const obtenerVentaGeneral = async (req, res) => {
   const id = toInt(req.params.id);
-  try {
-    const data = await ventaGeneralService.obtenerPerfilesPorIdUsuario(id);
+  try { 
+    const data = await ventaGeneralService.obtenerVentaGeneral(id);
 
     res.status(201).send({
       status: "Ok",
-      message: "Obtener perfiles exitosamente",
+      message: "Obtener venta general exitosamente",
       data,
     });
   } catch (error) {
@@ -49,7 +52,7 @@ const obtenerPerfilesPorIdUsuario = async (req, res) => {
       // Manejo de otros tipos de errores
       return res.status(500).send({
         status: "Error",
-        message: "Error inesperado al procesar la obtencon de perfiles.",
+        message: "Error inesperado al procesar la obtencon de la venta general.",
         details: error.message,
       });
     }
@@ -58,5 +61,5 @@ const obtenerPerfilesPorIdUsuario = async (req, res) => {
 
 module.exports = {
   crearVentaGeneral,
-  obtenerPerfilesPorIdUsuario,
+  obtenerVentaGeneral,
 };

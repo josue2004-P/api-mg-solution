@@ -15,7 +15,7 @@ router
     "/:id",
     validarJWT,
     validarPerfil(["ADMINISTRADOR"]),
-    ventaGeneralController.obtenerPerfilesPorIdUsuario
+    ventaGeneralController.obtenerVentaGeneral
   );
 
 module.exports = router;

@@ -85,7 +85,9 @@ model BP_07_VENTA_GENERAL {
   nIdVentaGeneral07VentaGeneral Int @id @default(autoincrement())
   sMonth String
   nYear Int
-  nValue Int
+  nValue Float
   nNoCuenta06Clientes Int
-  cliente              BP_06_CLIENTE  @relation("VentaGeneralCliente", fields: [nNoCuenta06Clientes], references: [nNoCuenta06Clientes])
+  cliente BP_06_CLIENTE @relation("VentaGeneralCliente", fields: [nNoCuenta06Clientes], references: [nNoCuenta06Clientes])
+
+  @@unique([sMonth, nYear, nNoCuenta06Clientes], name: "unique_venta_general")
 }
