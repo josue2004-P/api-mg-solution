@@ -37,6 +37,7 @@ const obtenerClientes = async (req, res) => {
   }
 };
 
+// FUNCION CREAR CLIENTE
 const crearCliente = async (req, res) => {
   const {
     nNoCuenta06Clientes,
@@ -78,11 +79,11 @@ const crearCliente = async (req, res) => {
 const obtenerClientePorId = async (req, res) => {
   try {
     const id = toInt(req.params.id);
-    const data = await usuarioService.obtenerUsuarioPorId(id);
+    const data = await clienteService.obtenerClientePorId(id);
 
     res.status(201).send({
       status: "Ok",
-      message: "Usuario obtenidos correctamente",
+      message: "Cliente obtenido correctamente",
       data,
     });
   } catch (error) {
@@ -94,7 +95,7 @@ const obtenerClientePorId = async (req, res) => {
     } else {
       res.status(500).send({
         status: "Error",
-        message: "Error inesperado al obtener el usuario",
+        message: "Error inesperado al obtener el cliente",
         message: error.message,
       });
     }
@@ -104,11 +105,11 @@ const obtenerClientePorId = async (req, res) => {
 const desactivarClientePorId = async (req, res) => {
   try {
     const id = toInt(req.params.id);
-    const data = await usuarioService.desactivarUsuarioPorId(id);
+    const data = await clienteService.desactivarClientePorId(id);
 
     res.status(201).send({
       status: "Ok",
-      message: "Usuario desactivado correctamente",
+      message: "Cliente desactivado correctamente",
       data,
     });
   } catch (error) {
@@ -120,7 +121,7 @@ const desactivarClientePorId = async (req, res) => {
     } else {
       res.status(500).send({
         status: "Error",
-        message: "Error inesperado al desactivar a el usuario",
+        message: "Error inesperado al desactivar a el cliente",
         message: error.message,
       });
     }
@@ -130,11 +131,11 @@ const desactivarClientePorId = async (req, res) => {
 const activarClientePorId = async (req, res) => {
   try {
     const id = toInt(req.params.id);
-    const data = await usuarioService.activarUsuarioPorId(id);
+    const data = await clienteService.activarClientePorId(id);
 
     res.status(201).send({
       status: "Ok",
-      message: "Usuario activado correctamente",
+      message: "Cliente activado correctamente",
       data,
     });
   } catch (error) {
@@ -146,7 +147,7 @@ const activarClientePorId = async (req, res) => {
     } else {
       res.status(500).send({
         status: "Error",
-        message: "Error inesperado al desactivar a el usuario",
+        message: "Error inesperado al activar a el cliente",
         message: error.message,
       });
     }
@@ -154,32 +155,18 @@ const activarClientePorId = async (req, res) => {
 };
 
 const editarClientePorId = async (req, res) => {
-  const filePath = req.file?.path; // Ruta del archivo subido (si hay)
-
   try {
     const id = toInt(req.params.id);
     const data = req.body;
 
-    const archivoFile2 = req.file;
-    const usuarioImagen = archivoFile2
-      ? path.basename(archivoFile2.path)
-      : null;
-    data.usuarioImagen = usuarioImagen;
-
-    const permiso = await usuarioService.editarUsuarioPorId(id, data);
+    const cliente = await clienteService.editarClientePorId(id, data);
 
     res.status(201).send({
       status: "Ok",
-      message: "Usuario editado correctamente",
-      data: {
-        permiso,
-      },
+      message: "Cliente editado correctamente",
+      cliente,
     });
   } catch (error) {
-    // Si hay un error y se subió una imagen, eliminarla
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath); // Elimina el archivo
-    }
 
     console.log(error);
     if (error.message) {
@@ -190,7 +177,7 @@ const editarClientePorId = async (req, res) => {
     } else {
       res.status(500).send({
         status: "Error",
-        message: "Error inesperado al editadar el usuario",
+        message: "Error inesperado al editadar el cliente",
         message: error.message,
       });
     }
@@ -204,7 +191,7 @@ const generarExcel = async (req, res) => {
     return res.status(400).send("El body debe ser un arreglo de objetos");
   }
 
-  const filePath = await usuarioService.generarExcel(data);
+  const filePath = await clienteService.generarExcel(data);
 
   // Enviar el archivo como respuesta
   res.download(filePath, "datos.xlsx", (err) => {
@@ -220,7 +207,7 @@ const generarPdf = async (req, res) => {
 
   const data = req.body
 
-  const stream = await usuarioService.generarPdf(data);
+  const stream = await clienteService.generarPdf(data);
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", 'attachment; filename="vale_almacen.pdf"');
   stream.pipe(res);

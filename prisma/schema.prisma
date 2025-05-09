@@ -77,6 +77,7 @@ model BP_06_CLIENTE {
   sApellidoPaternoCliente String
   sApellidoMaternoCliente String
   dFechaCreacion      DateTime               @default(now())
+  bInactivo             Boolean                @default(false)
   ventasGenerales            BP_07_VENTA_GENERAL[] @relation("VentaGeneralCliente")
 }
 
