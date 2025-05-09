@@ -70,3 +70,21 @@ model BP_05_PERFIL_PERMISO {
   @@index([nId02Perfil], map: "BP_05_PERFIL_PERMISO_nId02Perfil_fkey")
   @@index([nId03Permiso], map: "BP_05_PERFIL_PERMISO_nId03Permiso_fkey")
 }
+
+model BP_06_CLIENTE {
+  nNoCuenta06Clientes Int                    @id @default(autoincrement())
+  sNombreCliente String
+  sApellidoPaternoCliente String
+  sApellidoMaternoCliente String
+  dFechaCreacion      DateTime               @default(now())
+  ventasGenerales            BP_07_VENTA_GENERAL[] @relation("VentaGeneralCliente")
+}
+
+model BP_07_VENTA_GENERAL {
+  nIdVentaGeneral07VentaGeneral Int @id @default(autoincrement())
+  sMonth String
+  nYear Int
+  nValue Int
+  nNoCuenta06Clientes Int
+  cliente              BP_06_CLIENTE  @relation("VentaGeneralCliente", fields: [nNoCuenta06Clientes], references: [nNoCuenta06Clientes])
+}
