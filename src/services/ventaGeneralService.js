@@ -44,9 +44,7 @@ const crearVentaGeneral = async (nNoCuenta06Clientes, datos) => {
             nNoCuenta06Clientes,
           },
         });
-      } else {
-        console.log(`✖ Valor inválido ignorado: ${valorBruto}`);
-      }
+      } 
     }
   }
 
