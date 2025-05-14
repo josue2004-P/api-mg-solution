@@ -16,11 +16,13 @@ const v1PdfsRouter = require("./v1/routes/pdfRoutes");
 const v1FtpRouter = require("./v1/routes/ftpRoutes");
 const v1ClienteRouter = require("./v1/routes/clientesRoutes");
 const v1VentaGeneralRouter = require("./v1/routes/ventaGeneralRoutes");
+const corsMiddleware = require('./config/cors.config');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(corsMiddleware);
+
 app.use(express.json());
 
 // Directorio Público

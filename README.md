@@ -61,5 +61,5 @@ npx prisma generate
    INSERT INTO
    `BP_04_PERFIL_USUARIO`
    (nId04PerfilUsuario,nId01Usuario,nId02Perfil,dFechaCreacion,dFechaActualizacion)
-   VALUES (1,1,2,'2025-04-15 22:37:57.164',NULL);
+   VALUES (1,1,1,'2025-04-15 22:37:57.164',NULL);
    ```
