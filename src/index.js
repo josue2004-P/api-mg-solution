@@ -14,8 +14,6 @@ const v1ApiExternaRouter = require("./v1/routes/apiExternaRoutes");
 const v1ImagesRouter = require("./v1/routes/imageRoutes");
 const v1PdfsRouter = require("./v1/routes/pdfRoutes");
 const v1FtpRouter = require("./v1/routes/ftpRoutes");
-const v1ClienteRouter = require("./v1/routes/clientesRoutes");
-const v1VentaGeneralRouter = require("./v1/routes/ventaGeneralRoutes");
 const corsMiddleware = require('./config/cors.config');
 
 const app = express();
@@ -42,8 +40,6 @@ app.use("/api/v1/apiExterna", v1ApiExternaRouter);
 app.use("/api/v1/ftp", v1FtpRouter);  // Conexión FTP
 app.use("/api/v1/pdfs", v1PdfsRouter);  // Ver PDFs
 app.use("/api/v1/imagenes", v1ImagesRouter);  // Rutas para imágenes
-app.use("/api/v1/clientes", v1ClienteRouter);  // Rutas para CLIENTES
-app.use("/api/v1/ventaGeneral", v1VentaGeneralRouter);  // Rutas para CLIENTES
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
