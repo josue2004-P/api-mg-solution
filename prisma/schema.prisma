@@ -15,10 +15,10 @@ model BP_01_USUARIO {
   sUsuario            String                 @unique
   sEmail              String                 @unique
   sPassword           String
-  bInactivo             Boolean                @default(false)
   dFechaCreacion      DateTime               @default(now())
   dFechaActualizacion DateTime?
   sUsuarioImg         String?
+  bInactivo           Boolean                @default(false)
   perfilesUsuario     BP_04_PERFIL_USUARIO[] @relation("UsuarioPerfiles")
 }
 
@@ -72,22 +72,23 @@ model BP_05_PERFIL_PERMISO {
 }
 
 model BP_06_CLIENTE {
-  nNoCuenta06Clientes Int                    @id @default(autoincrement())
-  sNombreCliente String
+  nNoCuenta06Clientes     Int                   @id @default(autoincrement())
+  sNombreCliente          String
   sApellidoPaternoCliente String
   sApellidoMaternoCliente String
-  dFechaCreacion      DateTime               @default(now())
-  bInactivo             Boolean                @default(false)
-  ventasGenerales            BP_07_VENTA_GENERAL[] @relation("VentaGeneralCliente")
+  dFechaCreacion          DateTime              @default(now())
+  bInactivo               Boolean               @default(false)
+  ventasGenerales         BP_07_VENTA_GENERAL[] @relation("VentaGeneralCliente")
 }
 
 model BP_07_VENTA_GENERAL {
-  nIdVentaGeneral07VentaGeneral Int @id @default(autoincrement())
-  sMonth String
-  nYear Int
-  nValue Float
-  nNoCuenta06Clientes Int
-  cliente BP_06_CLIENTE @relation("VentaGeneralCliente", fields: [nNoCuenta06Clientes], references: [nNoCuenta06Clientes])
+  nIdVentaGeneral07VentaGeneral Int           @id @default(autoincrement())
+  sMonth                        String
+  nYear                         Int
+  nValue                        Float
+  nNoCuenta06Clientes           Int
+  cliente                       BP_06_CLIENTE @relation("VentaGeneralCliente", fields: [nNoCuenta06Clientes], references: [nNoCuenta06Clientes])
 
   @@unique([sMonth, nYear, nNoCuenta06Clientes], name: "unique_venta_general")
+  @@index([nNoCuenta06Clientes], map: "BP_07_VENTA_GENERAL_nNoCuenta06Clientes_fkey")
 }
