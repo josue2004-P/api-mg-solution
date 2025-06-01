@@ -9,6 +9,8 @@ services:
       MYSQL_DATABASE: test_db
     ports:
       - '3307:3306'
+    volumes:
+      - db_data:/var/lib/mysql  
     networks:
       - bp_net
 
@@ -29,8 +31,12 @@ services:
     networks:
       - bp_net
       - proxy
-
+    # command: bash -c "composer install && apache2-foreground"
+    
 networks:
   bp_net:
   proxy:
     external: true
+
+volumes:
+  db_data:
