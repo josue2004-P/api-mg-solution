@@ -20,5 +20,14 @@ jobs:
           port:  ${{ secrets.SSH_PORT }} 
           script: |
             cd ${{ secrets.WORK_DIR }}
-            echo "Estoy dentro del servidor en la ruta de trabajo"
-            # Aquí puedes poner: npm install, pm2 restart, etc.
+            
+            echo "📥 Actualizando repositorio..."
+            git fetch
+            git checkout ${{ secrets.MAIN_BRANCH }}
+            git pull
+
+            # echo "🐳 Reconstruyendo contenedores Docker..."
+            docker compose down
+            docker compose up -d --build
+
+            echo "✅ Despliegue completado en $HOSTNAME"
