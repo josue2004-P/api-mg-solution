@@ -24,7 +24,7 @@ jobs:
             echo "📥 Actualizando repositorio..."
             git fetch origin
             git checkout ${{ secrets.MAIN_BRANCH }}
-            git pull ${{ secrets.MAIN_BRANCH }}
+            git pull origin ${{ secrets.MAIN_BRANCH }}
 
             # echo "🐳 Reconstruyendo contenedores Docker..."
             docker compose down
