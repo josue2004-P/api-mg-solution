@@ -20,7 +20,7 @@ jobs:
           port:  ${{ secrets.SSH_PORT }} 
           script: |
             cd ${{ secrets.WORK_DIR }}
-            
+
             echo "📥 Actualizando repositorio..."
             git fetch
             git checkout ${{ secrets.MAIN_BRANCH }}
@@ -31,3 +31,4 @@ jobs:
             docker compose up -d --build
 
             echo "✅ Despliegue completado en $HOSTNAME"
+            echo "✅ CHIDO PA"
