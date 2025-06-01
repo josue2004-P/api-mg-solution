@@ -32,5 +32,4 @@ jobs:
 
             echo "✅ Despliegue completado en $HOSTNAME"
             echo "✅ CHIDO PA"
-            echo "✅ "
 
