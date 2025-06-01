@@ -22,14 +22,13 @@ jobs:
             cd ${{ secrets.WORK_DIR }}
 
             echo "📥 Actualizando repositorio..."
-            git fetch
+            git fetch origin
             git checkout ${{ secrets.MAIN_BRANCH }}
-            git pull
+            git pull ${{ secrets.MAIN_BRANCH }}
 
             # echo "🐳 Reconstruyendo contenedores Docker..."
             docker compose down
             docker compose up -d --build
 
             echo "✅ Despliegue completado en $HOSTNAME"
-            echo "✅ CHIDO PA"
 
