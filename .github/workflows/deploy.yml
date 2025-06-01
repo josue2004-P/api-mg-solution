@@ -1,4 +1,4 @@
-name: CI/CD PHP Node Deploy
+name: CI/CD Node Deploy
 
 on:
   push:
@@ -16,5 +16,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }} # Solo si la clave está protegida
+          port:  ${{ secrets.SSH_PORT }} 
           script: |
             cd ${{ secrets.WORK_DIR }}
+            echo "Estoy dentro del servidor en la ruta de trabajo"
+            # Aquí puedes poner: npm install, pm2 restart, etc.
