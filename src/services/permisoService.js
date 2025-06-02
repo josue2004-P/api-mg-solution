@@ -53,7 +53,7 @@ const obtenerPermisos = async ({ sNombre, page, limit }) => {
   ]);
 
   if (!permisos || permisos.length == 0) {
-    throw new Error("No existen permisos registrados ");
+    throw new Error("No hay permisos registrados ");
   }
 
   return {
