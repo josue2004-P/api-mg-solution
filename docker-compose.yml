@@ -1,42 +1,35 @@
-version: '3.8'
-
 services:
-  db_bp:
+  bd_mysql_sistema_venta:
     image: mysql:8.0
     container_name: db_bp
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test_db
+      MYSQL_DATABASE: mysql_sistema_venta
     ports:
       - '3307:3306'
     volumes:
-      - db_data:/var/lib/mysql  
+      - vol_sistema_ventas:/var/lib/mysql  
     networks:
-      - bp_net
+      - sistema_venta_net
 
-  api_bp:  # <-- ¡debe estar al mismo nivel que db_bp!
+  api_sistema_venta:  # <-- ¡debe estar al mismo nivel que db_bp!
     build: .
-    container_name: api_bp
+    container_name: api_sistema_venta
     ports:
       - '3000:3000'
     depends_on:
-      - db_bp
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      SECRET_JWT_SEED: ${SECRET_JWT_SEED}
-      HOST: ${HOST}
-      USER: ${USER}
-      PASSWORD: ${PASSWORD}
-      FRONTEND_URL: ${FRONTEND_URL}
+      - bd_mysql_sistema_venta
+    env_file:
+      - .env
     networks:
-      - bp_net
-      - proxy
+      - sistema_venta_net
+      - sistema_venta_proxy
     # command: bash -c "composer install && apache2-foreground"
     
 networks:
-  bp_net:
-  proxy:
+  sistema_venta_net:
+  sistema_venta_proxy:
     external: true
 
 volumes:
-  db_data:
+  vol_sistema_ventas:
