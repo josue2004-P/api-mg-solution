@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "⏳ Esperando a que MySQL esté disponible en db_bp..."
-until mysqladmin ping -h db_bp -P 3306 --silent; do
+echo "⏳ Esperando a que MySQL esté disponible en bd_mysql_mvp..."
+until mysqladmin ping -h bd_mysql_mvp -P 3306 --silent; do
   echo "❌ MySQL no disponible aún, esperando..."
   sleep 2
 done
