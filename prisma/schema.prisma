@@ -7,88 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model BP_01_USUARIO {
-  nId01Usuario        Int                    @id @default(autoincrement())
-  sNombre             String
-  sApellidoPaterno    String
-  sApellidoMaterno    String
-  sUsuario            String                 @unique
-  sEmail              String                 @unique
-  sPassword           String
-  dFechaCreacion      DateTime               @default(now())
-  dFechaActualizacion DateTime?
-  sUsuarioImg         String?
-  bInactivo           Boolean                @default(false)
-  perfilesUsuario     BP_04_PERFIL_USUARIO[] @relation("UsuarioPerfiles")
+model usuarios {
+  id                   BigInt           @id @default(autoincrement())
+  nombre_usuario       String           @unique @db.VarChar(50)
+  correo_electronico   String           @unique @db.VarChar(100)
+  contrasena_hash      String           @db.VarChar(255)
+  nombre               String?          @db.VarChar(50)
+  apellido             String?          @db.VarChar(50)
+  esta_activo          Boolean          @default(true)
+  ultimo_inicio_sesion DateTime?
+  creado_en            DateTime         @default(now()) @db.Timestamp(6)
+  actualizado_en       DateTime         @db.Timestamp(6)
+
+  usuario_perfil usuario_perfil[]
 }
 
-model BP_02_PERFIL {
-  nId02Perfil         Int                    @id @default(autoincrement())
-  sNombre             String                 @unique
-  sDescripcion        String
-  dFechaCreacion      DateTime               @default(now())
-  dFechaActualizacion DateTime?
-  perfilesUsuario     BP_04_PERFIL_USUARIO[] @relation("PerfilUsuarios")
-  perfilesPermiso     BP_05_PERFIL_PERMISO[] @relation("PerfilPermisos")
+model perfiles {
+  id             BigInt           @id @default(autoincrement())
+  nombre         String           @unique @db.VarChar(50)
+  descripcion    String?
+  created_at     DateTime         @default(now()) @db.Timestamp(6)
+  updated_at     DateTime         @db.Timestamp(6)
+
+  usuario_perfil  usuario_perfil[]
+  perfil_permisos perfil_permisos[]
 }
 
-model BP_03_PERMISO {
-  nId03Permiso        Int                    @id @default(autoincrement())
-  sNombre             String                 @unique
-  sDescripcion        String
-  dFechaCreacion      DateTime               @default(now())
-  dFechaActualizacion DateTime?
-  perfilesPermiso     BP_05_PERFIL_PERMISO[] @relation("PermisoPerfiles")
+model usuario_perfil {
+  user_id   BigInt
+  perfil_id BigInt
+
+  usuarios usuarios @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  perfiles perfiles @relation(fields: [perfil_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, perfil_id])
 }
 
-model BP_04_PERFIL_USUARIO {
-  nId04PerfilUsuario  Int           @id @default(autoincrement())
-  nId01Usuario        Int
-  nId02Perfil         Int
-  dFechaCreacion      DateTime      @default(now())
-  dFechaActualizacion DateTime?
-  usuario             BP_01_USUARIO @relation("UsuarioPerfiles", fields: [nId01Usuario], references: [nId01Usuario])
-  perfil              BP_02_PERFIL  @relation("PerfilUsuarios", fields: [nId02Perfil], references: [nId02Perfil])
+model permisos {
+  id          BigInt           @id @default(autoincrement())
+  nombre      String           @unique @db.VarChar(50)
+  descripcion String?
+  created_at  DateTime         @default(now()) @db.Timestamp(6)
+  updated_at  DateTime         @db.Timestamp(6)
 
-  @@index([nId01Usuario], map: "BP_04_PERFIL_USUARIO_nId01Usuario_fkey")
-  @@index([nId02Perfil], map: "BP_04_PERFIL_USUARIO_nId02Perfil_fkey")
+  perfil_permisos perfil_permisos[]
 }
 
-model BP_05_PERFIL_PERMISO {
-  nId05PerfilPermiso  Int           @id @default(autoincrement())
-  nId03Permiso        Int
-  nId02Perfil         Int
-  nLeer               Boolean       @default(false)
-  nCrear              Boolean       @default(false)
-  nEditar             Boolean       @default(false)
-  nBorrar             Boolean       @default(false)
-  dFechaCreacion      DateTime      @default(now())
-  dFechaActualizacion DateTime?
-  perfil              BP_02_PERFIL  @relation("PerfilPermisos", fields: [nId02Perfil], references: [nId02Perfil])
-  permiso             BP_03_PERMISO @relation("PermisoPerfiles", fields: [nId03Permiso], references: [nId03Permiso])
+model perfil_permisos {
+  id         BigInt   @id @default(autoincrement())
+  perfil_id  BigInt
+  permiso_id BigInt
+  ver        Boolean  @default(false)
+  crear      Boolean  @default(false)
+  editar     Boolean  @default(false)
+  eliminar   Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
 
-  @@index([nId02Perfil], map: "BP_05_PERFIL_PERMISO_nId02Perfil_fkey")
-  @@index([nId03Permiso], map: "BP_05_PERFIL_PERMISO_nId03Permiso_fkey")
-}
-
-model BP_06_CLIENTE {
-  nNoCuenta06Clientes     Int                   @id @default(autoincrement())
-  sNombreCliente          String
-  sApellidoPaternoCliente String
-  sApellidoMaternoCliente String
-  dFechaCreacion          DateTime              @default(now())
-  bInactivo               Boolean               @default(false)
-  ventasGenerales         BP_07_VENTA_GENERAL[] @relation("VentaGeneralCliente")
-}
-
-model BP_07_VENTA_GENERAL {
-  nIdVentaGeneral07VentaGeneral Int           @id @default(autoincrement())
-  sMonth                        String
-  nYear                         Int
-  nValue                        Float
-  nNoCuenta06Clientes           Int
-  cliente                       BP_06_CLIENTE @relation("VentaGeneralCliente", fields: [nNoCuenta06Clientes], references: [nNoCuenta06Clientes])
-
-  @@unique([sMonth, nYear, nNoCuenta06Clientes], name: "unique_venta_general")
-  @@index([nNoCuenta06Clientes], map: "BP_07_VENTA_GENERAL_nNoCuenta06Clientes_fkey")
+  perfiles perfiles @relation(fields: [perfil_id], references: [id], onDelete: Cascade)
+  permisos permisos @relation(fields: [permiso_id], references: [id], onDelete: Cascade)
 }

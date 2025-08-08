@@ -3,135 +3,139 @@ const bcrypt = require("bcryptjs");
 const { generarJWT } = require("../helpers/jwt");
 const jwt = require("jsonwebtoken");
 
-const prisma = getPrisma(); 
+const prisma = getPrisma();
 
-const newUsuario = async (sNombre,sApellidoPaterno,sApellidoMaterno,sUsuario,sEmail,sPassword) => {
+const crearUsuario = async ({
+  nombre,
+  apellido,
+  nombre_usuario,
+  correo_electronico,
+  contrasena_hash,
+}) => {
+  // Verificar si ya existe usuario con correo electrónico
+  const usuarioPorEmail = await prisma.usuarios.findFirst({
+    where: { correo_electronico },
+  });
 
-    let usuarioPorEmail = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        sEmail: sEmail,
-      },
-    });
-    
-    if (usuarioPorEmail) {
-      throw new Error("El correo electrónico ya está registrado.");
-    }
-    
-    let usuarioPorUsuario = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        sUsuario: sUsuario,
-      },
-    });
-    
-    if (usuarioPorUsuario) {
-      throw new Error("El nombre de usuario ya está registrado.");
-    }
-    
-    // Encriptar contraseña
-    const salt = bcrypt.genSaltSync();
-    const newPassword = bcrypt.hashSync(sPassword, salt);
+  if (usuarioPorEmail) {
+    throw new Error("El correo electrónico ya está registrado.");
+  }
 
-    // Crear el usuario en la base de datos
-    const newUser = await prisma.BP_01_USUARIO.create({
-        data: {
-            sNombre: sNombre,
-            sApellidoPaterno: sApellidoPaterno,
-            sApellidoMaterno: sApellidoMaterno,
-            sUsuario: sUsuario,
-            sEmail: sEmail,
-            sPassword: newPassword,
-        },
-    });
+  // Verificar si ya existe usuario con nombre de usuario
+  const usuarioPorUsuario = await prisma.usuarios.findFirst({
+    where: { nombre_usuario },
+  });
 
-    // Generar JWT
-    const token = await generarJWT(newUser.nId01Usuario, newUser.sNombre);
-    
-    return {
-        user: newUser,
-        token,
-    };
-}
+  if (usuarioPorUsuario) {
+    throw new Error("El nombre de usuario ya está registrado.");
+  }
+
+  // Encriptar contraseña
+  const salt = bcrypt.genSaltSync();
+  const passwordHash = bcrypt.hashSync(contrasena_hash, salt);
+
+  // Crear usuario en la base de datos
+  const newUser = await prisma.usuarios.create({
+    data: {
+      nombre,
+      apellido,
+      nombre_usuario,
+      correo_electronico,
+      contrasena_hash: passwordHash,
+    },
+  });
+
+  // Generar JWT
+  const token = await generarJWT(newUser.id, newUser.nombre_usuario);
+
+  return {
+    user: newUser,
+    token,
+  };
+};
 
 const revalidarToken = async (tokenObtenido) => {
+  // AGREGAR SERVICIO
+  const { uid, nombre } = jwt.verify(
+    tokenObtenido,
+    process.env.SECRET_JWT_SEED
+  );
 
-    // AGREGAR SERVICIO
-    const { uid, nombre } = jwt.verify(
-      tokenObtenido,
-      process.env.SECRET_JWT_SEED
-    );
-
-    const usuario = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        nId01Usuario: uid,
-      },
-      include: {
-        perfilesUsuario: {
-          include: {
-            perfil: {
-              select: {
-                sNombre: true,
-                sDescripcion: true, // Puedes agregar más campos si lo necesitas
-              },
+  const usuario = await prisma.BP_01_USUARIO.findFirst({
+    where: {
+      nId01Usuario: uid,
+    },
+    include: {
+      perfilesUsuario: {
+        include: {
+          perfil: {
+            select: {
+              sNombre: true,
+              sDescripcion: true, // Puedes agregar más campos si lo necesitas
             },
           },
         },
       },
-    });
+    },
+  });
 
-    const token = await generarJWT(uid, nombre);
-    
-    const perfilNombres = usuario.perfilesUsuario.map(item => item.perfil.sNombre);
+  const token = await generarJWT(uid, nombre);
 
-    return {
-      uid: usuario.nId01Usuario,
-      perfil: perfilNombres, // Aquí tienes solo los nombres de los perfiles
-      token,
-    };
-}
+  const perfilNombres = usuario.perfilesUsuario.map(
+    (item) => item.perfil.sNombre
+  );
 
-const loginUsuario = async (sEmail,sPassword) => {
+  return {
+    uid: usuario.nId01Usuario,
+    perfil: perfilNombres, // Aquí tienes solo los nombres de los perfiles
+    token,
+  };
+};
 
-    const usuario = await prisma.BP_01_USUARIO.findFirst({
-      where: {
-        sEmail: sEmail,
-        bInactivo:false
-      },
-      include: {
-        perfilesUsuario: {
-          include: {
-            perfil: {
-              select: {
-                sNombre: true,
-                sDescripcion: true, // Puedes agregar más campos si lo necesitas
-              },
+const loginUsuario = async (sEmail, sPassword) => {
+  const usuario = await prisma.BP_01_USUARIO.findFirst({
+    where: {
+      sEmail: sEmail,
+      bInactivo: false,
+    },
+    include: {
+      perfilesUsuario: {
+        include: {
+          perfil: {
+            select: {
+              sNombre: true,
+              sDescripcion: true, // Puedes agregar más campos si lo necesitas
             },
           },
         },
       },
-    });
+    },
+  });
 
-      if (!usuario) {
-        throw new Error("El usuario no existe con ese email");
-      }
-      // Confirmar los passwords
-      const validPassword = bcrypt.compareSync(sPassword, usuario.sPassword);
+  if (!usuario) {
+    throw new Error("El usuario no existe con ese email");
+  }
+  // Confirmar los passwords
+  const validPassword = bcrypt.compareSync(sPassword, usuario.sPassword);
 
-      if (!validPassword) {
-        throw new Error("Contraseña incorrecto");
-      }
-      
-      const token = await generarJWT(usuario.nId01Usuario, usuario.sName);
+  if (!validPassword) {
+    throw new Error("Contraseña incorrecto");
+  }
 
-      const perfilNombres = usuario.perfilesUsuario.map(item => item.perfil.sNombre);
+  const token = await generarJWT(usuario.nId01Usuario, usuario.sName);
 
-      return {
-        uid: usuario.nId01Usuario,
-        perfil: perfilNombres, // Aquí tienes solo los nombres de los perfiles
-        token,
-      };
-}
+  const perfilNombres = usuario.perfilesUsuario.map(
+    (item) => item.perfil.sNombre
+  );
+
+  return {
+    uid: usuario.nId01Usuario,
+    perfil: perfilNombres, // Aquí tienes solo los nombres de los perfiles
+    token,
+  };
+};
 module.exports = {
-    newUsuario,
-    revalidarToken,
-    loginUsuario
-}
+  crearUsuario,
+  revalidarToken,
+  loginUsuario,
+};

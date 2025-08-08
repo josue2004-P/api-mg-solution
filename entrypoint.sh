@@ -10,4 +10,4 @@ echo "✅ MySQL disponible. Ejecutando migraciones..."
 npx prisma migrate deploy
 
 echo "🚀 Iniciando la aplicación..."
-exec node src/index.js
+exec npm run dev

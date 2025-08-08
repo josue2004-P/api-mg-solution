@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Instala netcat (nc) para esperar a la base de datos
+# Instala cliente mysql (netcat no es necesario para mysql ping)
 RUN apt-get update && apt-get install -y default-mysql-client
 
 COPY . .
@@ -18,5 +18,4 @@ RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 3000
 
-# Usa el script como punto de entrada
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]

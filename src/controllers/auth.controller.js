@@ -1,46 +1,37 @@
 const authService = require("../services/authService");
+const {
+  mapRequestToUsuario,
+  formatUsuario,
+} = require("../helpers/auth.helpers");
 
 const crearUsuario = async (req, res) => {
-  const {
-    sNombre,
-    sApellidoPaterno,
-    sApellidoMaterno,
-    sUsuario,
-    sEmail,
-    sPassword,
-  } = req.body;
+  // MAPEO DE BODY
+  const usuario = mapRequestToUsuario(req.body);
 
   try {
-    const { user, token } = await authService.newUsuario(
-      sNombre,
-      sApellidoPaterno,
-      sApellidoMaterno,
-      sUsuario,
-      sEmail,
-      sPassword
-    );
+    
+    // LLAMADO A FUNCIÓN Y RETORNO
+    const { user, token } = await authService.newUsuario(usuario);
 
-    res.status(201).send({
+    res.status(201).json({
       status: "Ok",
       message: "Usuario creado exitosamente",
       data: {
-        user: user.sName,
-        token: token,
+        user: formatUsuario(user),
+        token,
       },
     });
   } catch (error) {
-    // Si el error es por correo ya registrado
     if (error.message) {
-      res.status(400).send({
+      res.status(400).json({
         status: "Error",
         message: error.message,
       });
     } else {
-      // Manejo de otros tipos de errores
-      res.status(500).send({
+      res.status(500).json({
         status: "Error",
         message: "Error inesperado al crear el usuario",
-        message: error.message,
+        error: error.message || error,
       });
     }
   }
