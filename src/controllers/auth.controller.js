@@ -1,4 +1,4 @@
-const authService = require("../services/authService");
+const authService = require("../services/auth.service");
 const {
   mapRequestToUsuario,
   formatUsuario,
@@ -6,16 +6,11 @@ const {
 
 const createUser = async (req, res) => {
   const user = mapRequestToUsuario(req.body);
-
   try {
     const { newUser, token } = await authService.createUser(user);
-
-    console.log(newUser)
-    console.log(token)
-
     res.status(201).json({
-      status: "Ok",
-      message: "Usuario creado exitosamente",
+      status: true,
+      message: "User created successfully",
       data: {
         user: formatUsuario(newUser),
         token,
@@ -24,12 +19,12 @@ const createUser = async (req, res) => {
   } catch (error) {
     if (error.message) {
       res.status(400).json({
-        status: "Error",
+        status: false,
         message: error.message,
       });
     } else {
       res.status(500).json({
-        status: "Error",
+        status: false,
         message: "Error inesperado al crear el usuario",
         error: error.message || error,
       });
@@ -37,49 +32,44 @@ const createUser = async (req, res) => {
   }
 };
 
-const revalidarToken = async (req, res = response) => {
-  const tokenObtenido = req.header("x-token");
+const revalidateToken = async (req, res = response) => {
+  const tokenObtained = req.header("x-token");
 
-  const { uid, token, perfil } = await authService.revalidarToken(
-    tokenObtenido
-  );
+  const { uid, token, profile } = await authService.revalidateToken(tokenObtained);
 
   res.json({
     ok: true,
     id: uid,
-    perfil,
+    profile,
     token,
   });
 };
 
 // LOGIN
-const loginUsuario = async (req, res = response) => {
-  const { sEmail, sPassword } = req.body;
+const loginUser = async (req, res = response) => {
+  const { email, password } = req.body;
 
   try {
-    const { uid, token, perfil } = await authService.loginUsuario(
-      sEmail,
-      sPassword
+    const { uid, token, profiles } = await authService.loginUser(
+      email,
+      password
     );
-
     res.json({
       ok: true,
       id: uid,
-      perfil,
+      profiles,
       token,
     });
   } catch (error) {
-    // Si el error es por correo ya registrado
-
     if (error.message) {
       res.status(400).send({
-        status: "Error",
+        status: false,
         message: error.message,
       });
     } else {
       // Manejo de otros tipos de errores
       res.status(500).send({
-        status: "Error",
+        status: false,
         message: error.message,
       });
     }
@@ -88,6 +78,6 @@ const loginUsuario = async (req, res = response) => {
 
 module.exports = {
   createUser,
-  revalidarToken,
-  loginUsuario,
+  revalidateToken,
+  loginUser,
 };
