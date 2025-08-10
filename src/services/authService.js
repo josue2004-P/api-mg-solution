@@ -5,51 +5,52 @@ const jwt = require("jsonwebtoken");
 
 const prisma = getPrisma();
 
-const crearUsuario = async ({
-  nombre,
-  apellido,
-  nombre_usuario,
-  correo_electronico,
-  contrasena_hash,
+const createUser = async ({
+  first_name,
+  last_name,
+  username,
+  email,
+  password,
 }) => {
-  // Verificar si ya existe usuario con correo electrónico
-  const usuarioPorEmail = await prisma.usuarios.findFirst({
-    where: { correo_electronico },
+
+  // SEARCH EMAIL REGISTERED
+  const userByEmail = await prisma.users.findFirst({
+    where: { email },
   });
 
-  if (usuarioPorEmail) {
-    throw new Error("El correo electrónico ya está registrado.");
+  if (userByEmail) {
+    throw new Error("The email is already registered.");
   }
 
-  // Verificar si ya existe usuario con nombre de usuario
-  const usuarioPorUsuario = await prisma.usuarios.findFirst({
-    where: { nombre_usuario },
+  // SEARCH USERNAME REGISTERED
+  const userByUsername = await prisma.users.findFirst({
+    where: { first_name },
   });
 
-  if (usuarioPorUsuario) {
-    throw new Error("El nombre de usuario ya está registrado.");
+  if (userByUsername) {
+    throw new Error("The username is already registered.");
   }
 
-  // Encriptar contraseña
+  // ENCRYPT PASSWORD
   const salt = bcrypt.genSaltSync();
-  const passwordHash = bcrypt.hashSync(contrasena_hash, salt);
+  const passwordHash = bcrypt.hashSync(password, salt);
 
-  // Crear usuario en la base de datos
+  // CREATE NEW USER IN THE DATABASE
   const newUser = await prisma.usuarios.create({
     data: {
-      nombre,
-      apellido,
-      nombre_usuario,
-      correo_electronico,
-      contrasena_hash: passwordHash,
+      first_name,
+      last_name,
+      username,
+      email,
+      password: passwordHash,
     },
   });
 
-  // Generar JWT
+  // GENERATE JWT
   const token = await generarJWT(newUser.id, newUser.nombre_usuario);
 
   return {
-    user: newUser,
+    newUser,
     token,
   };
 };
@@ -135,7 +136,7 @@ const loginUsuario = async (sEmail, sPassword) => {
   };
 };
 module.exports = {
-  crearUsuario,
+  createUser,
   revalidarToken,
   loginUsuario,
 };

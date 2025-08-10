@@ -1,20 +1,20 @@
 #!/bin/bash
-echo "🚀 El contenedor se ha iniciado correctamente"
-echo "⏳ Esperando a que MySQL esté disponible en bd_mysql_mvp..."
+echo "🚀 The container has started successfully"
+echo "⏳ Waiting for MySQL to be available at bd_mysql_mvp..."
 
 until mysqladmin ping -h bd_mysql_mvp -P 3306 --silent; do
-  echo "❌ MySQL no disponible aún, esperando..."
+  echo "❌ MySQL is not available yet, waiting..."
   sleep 2
 done
 
-echo "✅ MySQL disponible. Ejecutando migraciones..."
+echo "✅ MySQL is available. Running migrations..."
 npx prisma migrate deploy
 
-# Verifica entorno y ejecuta el comando correcto
+# Check environment and run the correct command
 if [ "$NODE_ENV" = "development" ]; then
-  echo "🌱 Entorno de desarrollo detectado. Ejecutando: npm run dev"
+  echo "🌱 Development environment detected. Running: npm run dev"
   exec npm run dev
 else
-  echo "🏭 Entorno de producción detectado. Ejecutando: npm run start"
+  echo "🏭 Production environment detected. Running: npm run start"
   exec npm run start
 fi

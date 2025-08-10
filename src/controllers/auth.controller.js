@@ -4,20 +4,20 @@ const {
   formatUsuario,
 } = require("../helpers/auth.helpers");
 
-const crearUsuario = async (req, res) => {
-  // MAPEO DE BODY
-  const usuario = mapRequestToUsuario(req.body);
+const createUser = async (req, res) => {
+  const user = mapRequestToUsuario(req.body);
 
   try {
-    
-    // LLAMADO A FUNCIÓN Y RETORNO
-    const { user, token } = await authService.newUsuario(usuario);
+    const { newUser, token } = await authService.createUser(user);
+
+    console.log(newUser)
+    console.log(token)
 
     res.status(201).json({
       status: "Ok",
       message: "Usuario creado exitosamente",
       data: {
-        user: formatUsuario(user),
+        user: formatUsuario(newUser),
         token,
       },
     });
@@ -87,7 +87,7 @@ const loginUsuario = async (req, res = response) => {
 };
 
 module.exports = {
-  crearUsuario,
+  createUser,
   revalidarToken,
   loginUsuario,
 };
