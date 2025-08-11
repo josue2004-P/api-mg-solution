@@ -80,11 +80,11 @@ const getPermissionById = async (id) => {
 
 //SERVICE UPDATE PERMISSION BY ID
 const updatePermissionById = async (id, data) => {
-  const permisoExisting = await prisma.permissions.findUnique({
+  const existingPermission = await prisma.permissions.findUnique({
     where: { id: id },
   });
 
-  if (!permisoExisting) {
+  if (!existingPermission) {
     throw new Error("No existe el permiso");
   }
 
@@ -106,11 +106,11 @@ const updatePermissionById = async (id, data) => {
 
 //SERVICE DELETE PERMISSION BY ID
 const deletePermissionById = async (id) => {
-  const permisoExisting = await prisma.permissions.findUnique({
+  const existingPermission = await prisma.permissions.findUnique({
     where: { id: id },
   });
 
-  if (!permisoExisting) {
+  if (!existingPermission) {
     throw new Error("No existe el permiso");
   }
 

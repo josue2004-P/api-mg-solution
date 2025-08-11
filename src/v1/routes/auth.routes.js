@@ -4,12 +4,12 @@ const authController = require("../../controllers/auth.controller");
 const { validateJWT } = require("../../middlewares/validate.jwt");
 
 const {
-  loginAuthValidacion,
-  createAuthValidacion,
+  loginAuthValidation,
+  createAuthValidation,
 } = require("../../middlewares/auth.validate");
 
-router.post("/", loginAuthValidacion, authController.loginUser);
-router.post("/new", createAuthValidacion, authController.createUser);
+router.post("/", loginAuthValidation, authController.loginUser);
+router.post("/new", createAuthValidation, authController.createUser);
 router.get("/renew", validateJWT, authController.revalidateToken);
 
 module.exports = router;

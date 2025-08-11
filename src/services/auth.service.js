@@ -2,7 +2,6 @@ const { getPrisma } = require("../database/prisma");
 const bcrypt = require("bcryptjs");
 const { generateJWT } = require("../helpers/jwt");
 const jwt = require("jsonwebtoken");
-const { toInt } = require("../helpers/toInt");
 
 const prisma = getPrisma();
 

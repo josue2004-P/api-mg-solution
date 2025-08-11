@@ -75,26 +75,25 @@ const getProfileById = async (id) => {
   if (!profile) {
     throw new Error("No existe el perfil con ese Id");
   }
-
   return profile;
 };
 
-//UPDATE PROFILE BY ID
+//SERVICE UPDATE PROFILE BY ID
 const updateProfileById = async (id, data) => {
-  const profileExisting = await prisma.profiles.findUnique({
+  const existingProfile = await prisma.profiles.findUnique({
     where: { id: id },
   });
 
-  if (!profileExisting) {
+  if (!existingProfile) {
     throw new Error("No existe el perfil");
   }
 
-  const profileUpdated  = await prisma.profiles.update({
+  const profileUpdated = await prisma.profiles.update({
     where: {
       id: id,
     },
     data: {
-      description: data.description, 
+      description: data.description,
     },
     select: {
       name: true,
@@ -105,13 +104,13 @@ const updateProfileById = async (id, data) => {
   return profileUpdated;
 };
 
-// DELETE PROFILE BY ID
+//SERVICE DELETE PROFILE BY ID
 const deleteProfileById = async (id) => {
-  const profileExisting = await prisma.profiles.findUnique({
+  const existingProfile = await prisma.profiles.findUnique({
     where: { id: id },
   });
 
-  if (!profileExisting) {
+  if (!existingProfile) {
     throw new Error("No existe el perfil");
   }
 
@@ -128,10 +127,38 @@ const deleteProfileById = async (id) => {
   return perfilDeleted;
 };
 
+//SERVICE ASSING PERMISSION
+const assingPermission = async (permissionId, profileId) => {
+  let profileByPermission = await prisma.profile_permissions.findFirst({
+    where: {
+      AND: [{ permission_id: permissionId }, { profile_id: profileId }],
+    },
+  });
+
+  if (profileByPermission) {
+    throw new Error("La asignación ya está registrado.");
+  }
+
+  const newAssignment = await prisma.profile_permissions.create({
+    data: {
+      permission_id: permissionId,
+      profile_id: profileId,
+    },
+  });
+
+  return {
+    assignmentPermission: {
+      permission_id: newAssignment.permission_id,
+      profile_id: newAssignment.profile_id,
+    },
+  };
+};
+
 module.exports = {
   createProfile,
   getAllProfiles,
   getProfileById,
   updateProfileById,
   deleteProfileById,
+  assingPermission,
 };

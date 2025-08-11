@@ -1,4 +1,4 @@
-// helpers/auth.helpers.js
+// helpers/user.helpers.js
 
 function mapRequestToUser(body) {
   const {
@@ -24,7 +24,20 @@ function formatUser(user) {
   };
 }
 
+// OBTENER NOMBRES COMPLETOS
+function addFullName(users) {
+  return users.map((user) => ({
+    ...user,
+    fullName: getFullName(user),
+  }));
+}
+
+function getFullName(user) {
+  return `${user.first_name} ${user.last_name} `;
+}
+
 module.exports = {
   mapRequestToUser,
   formatUser,
+  addFullName
 };

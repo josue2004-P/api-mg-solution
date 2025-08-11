@@ -13,6 +13,11 @@ router.post(
   validateJWT,
   profileController.createProfile
 );
+router.post(
+  "/assing-permission",
+  validateJWT,
+  profileController.assingPermission
+);
 router.get("/", validateJWT, profileController.getAllProfiles);
 router.get("/:id", validateJWT, profileController.getProfileById);
 router.put(

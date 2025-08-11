@@ -2,7 +2,7 @@
 const { body } = require("express-validator");
 const {validateFields} = require("./validate.fields");
 
-const createAuthValidation = [
+const createUserValidation = [
   body("first_name")
     .notEmpty()
     .withMessage("First name is required.")
@@ -31,19 +31,7 @@ const createAuthValidation = [
   validateFields,
 ];
 
-const loginAuthValidation = [
-  body("email")
-    .optional()
-    .isEmail()
-    .withMessage("Email is invalid if provided."),
-  body("password")
-    .notEmpty()
-    .withMessage("Password is required."),
-  validateFields,
-];
-
 module.exports = {
-  createAuthValidation,
-  loginAuthValidation
+  createUserValidation,
 }
 

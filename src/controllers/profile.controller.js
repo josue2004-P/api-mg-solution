@@ -143,10 +143,39 @@ const deleteProfileById = async (req, res) => {
   }
 };
 
+const assingPermission = async (req, res) => {
+  const { permissionId, profileId } = req.body;
+  try {
+    const { assignmentPermission } = await profileService.assingPermission(
+      permissionId,
+      profileId
+    );
+    res.status(201).send({
+      status: "Ok",
+      message: "Asignación creado exitosamente",
+      data: assignmentPermission,
+    });
+  } catch (error) {
+    if (error.message) {
+      res.status(400).send({
+        status: "Error",
+        message: error.message,
+      });
+    } else {
+      res.status(500).send({
+        status: "Error",
+        message: "Error inesperado al crear la asignación",
+        message: error.message,
+      });
+    }
+  }
+};
+
 module.exports = {
   createProfile,
   getAllProfiles,
   getProfileById,
   updateProfileById,
   deleteProfileById,
+  assingPermission,
 };

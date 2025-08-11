@@ -1,18 +1,18 @@
 const authService = require("../services/auth.service");
 const {
-  mapRequestToUsuario,
-  formatUsuario,
+  mapRequestToUser,
+  formatUser,
 } = require("../helpers/auth.helpers");
 
 const createUser = async (req, res) => {
-  const user = mapRequestToUsuario(req.body);
+  const user = mapRequestToUser(req.body);
   try {
     const { newUser, token } = await authService.createUser(user);
     res.status(201).json({
       status: true,
       message: "User created successfully",
       data: {
-        user: formatUsuario(newUser),
+        user: formatUser(newUser),
         token,
       },
     });
