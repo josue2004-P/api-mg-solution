@@ -1,14 +1,14 @@
 const { response } = require("express");
 const jwt = require("jsonwebtoken");
 
-const validarJWT = async (req, res = response, next) => {
+const validateJWT = async (req, res = response, next) => {
   // x-token headers
   const token = req.header("x-token");
 
   if (!token) {
     return res.status(401).json({
       ok: false,
-      msg: "No hay token en la petición",
+      msg: "No token provided in the request", // mensaje traducido
     });
   }
   try {
@@ -17,10 +17,13 @@ const validarJWT = async (req, res = response, next) => {
     req.name = name;
     next();
   } catch (error) {
-    return res.status(401).json({ msg: "Token no válido o expirado" });
+    return res.status(401).json({
+      ok: false,
+      msg: "Invalid or expired token",
+    });
   }
 };
 
 module.exports = {
-  validarJWT,
+  validateJWT,
 };

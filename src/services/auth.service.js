@@ -57,10 +57,7 @@ const createUser = async ({
 
 const revalidateToken = async (tokenObtained) => {
   // AGREGAR SERVICIO
-  const { uid, name } = jwt.verify(
-    tokenObtained,
-    process.env.SECRET_JWT_SEED
-  );
+  const { uid, name } = jwt.verify(tokenObtained, process.env.SECRET_JWT_SEED);
 
   const user = await prisma.users.findFirst({
     where: {
@@ -82,12 +79,12 @@ const revalidateToken = async (tokenObtained) => {
   });
 
   const token = await generateJWT(uid, name);
-  
+
   const profilesNames = user.user_profiles.map((item) => item.profiles.name);
 
   return {
-    uid: toInt(user.id),
-    profile: profilesNames, 
+    uid: user.id,
+    profile: profilesNames,
     token,
   };
 };
@@ -128,11 +125,12 @@ const loginUser = async (email, password) => {
   const profilesNames = user.user_profiles.map((item) => item.profiles.name);
 
   return {
-    uid: toInt(user.id),
+    uid: user.id,
     profiles: profilesNames,
     token,
   };
 };
+
 module.exports = {
   createUser,
   revalidateToken,

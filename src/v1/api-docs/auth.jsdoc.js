@@ -1,9 +1,15 @@
 /**
  * @swagger
- * /api/v1/auth:
+ * tags:
+ *   name: Authentication
+ *   description: Endpoints for user authentication
+ *
+ * /auth/:
  *   post:
- *     summary: Iniciar sesión
- *     description: Autentica un usuario existente
+ *     tags:
+ *       - Authentication
+ *     summary: Sign in
+ *     description: Authenticates an existing user
  *     requestBody:
  *       required: true
  *       content:
@@ -11,17 +17,17 @@
  *           schema:
  *             type: object
  *             required:
- *               - sEmail
- *               - sPassword
+ *               - email
+ *               - password
  *             properties:
- *               sEmail:
+ *               email:
  *                 type: string
  *                 format: email
- *                 example: "usuario@ejemplo.com"
- *               sPassword:
+ *                 example: "josue@example.com"
+ *               password:
  *                 type: string
  *                 format: password
- *                 example: "contraseña123"
+ *                 example: "josue2025"
  *     responses:
  *       200:
  *         description: Autenticación exitosa
@@ -30,20 +36,65 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: bool
+ *                   example: true
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 profiles:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["administrador", "cliente"]
  *                 token:
  *                   type: string
  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
- *         description: Datos de entrada inválidos
- *       401:
- *         description: Credenciales inválidas
- *       422:
- *         description: Validación de campos fallida
+ *         description: Validation failed — Input data contains errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 errores:
+ *                   type: array
+ *                   description: List of validation errors
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       msg:
+ *                         type: string
+ *                         example: "Password is required."
+ *                       param:
+ *                         type: string
+ *                         example: "password"
+ *                       location:
+ *                         type: string
+ *                         example: "body"
+ *       500:
+ *         description: Internal server error — Unexpected error occurred
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unexpected error occurred"
  *
  * /auth/new:
  *   post:
- *     summary: Crear nuevo usuario
- *     description: Registra un nuevo usuario en el sistema
+ *     tags:
+ *       - Authentication
+ *     summary: Create new user
+ *     description: Registers a new user in the system
  *     requestBody:
  *       required: true
  *       content:
@@ -51,79 +102,160 @@
  *           schema:
  *             type: object
  *             required:
- *               - sNombre
- *               - sApellidoPaterno
- *               - sApellidoMaterno
- *               - sUsuario
- *               - sEmail
- *               - sPassword
+ *               - first_name
+ *               - last_name
+ *               - username
+ *               - email
+ *               - password
  *             properties:
- *               sNombre:
+ *               first_name:
  *                 type: string
- *                 example: "Juan"
- *               sApellidoPaterno:
+ *                 example: "Josue"
+ *               last_name:
  *                 type: string
- *                 example: "Pérez"
- *               sApellidoMaterno:
+ *                 example: "Perez Eulogio"
+ *               username:
  *                 type: string
- *                 example: "González"
- *               sUsuario:
- *                 type: string
- *                 example: "juanpg"
- *               sEmail:
+ *                 example: "josue"
+ *               email:
  *                 type: string
  *                 format: email
- *                 example: "juan@ejemplo.com"
- *               sPassword:
+ *                 example: "josue@ejemplo.com"
+ *               password:
  *                 type: string
  *                 format: password
- *                 example: "contraseña123"
+ *                 example: "josue2025"
  *     responses:
  *       201:
- *         description: Usuario creado exitosamente
+ *         description: User created successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 mensaje:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
  *                   type: string
- *                   example: "Usuario creado exitosamente"
- *       400:
- *         description: Datos de entrada inválidos
- *       422:
- *         description: Validación de campos fallida
- *       409:
- *         description: Email o usuario ya existente
+ *                   example: "User created successfully"
+ *                 data:
+ *                   type: object
+ *                   description: Returns the newly created user and the generated authentication token
+ *                   properties:
+ *                     user:
+ *                       type: object
+ *                       description: Formatted user information
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                           example: 1
+ *                         username:
+ *                           type: string
+ *                           example: "josue"
+ *                         email:
+ *                           type: string
+ *                           example: "josue@ejemplo.com"
+ *                         first_name:
+ *                           type: string
+ *                           example: "josue"
+ *                     token:
+ *                       type: string
+ *                       example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+*       400:
+*         description: Validation failed — Input data contains errors
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 errores:
+*                   type: array
+*                   description: List of validation errors
+*                   items:
+*                     type: object
+*                     properties:   
+*                       errores:
+*                        type: array
+*                        description: List of validation errors
+*                        items:
+*                          type: object
+*                          properties:
+*                            msg:
+*                              type: string
+*                              enum:
+*                                - "First name is required."
+*                                - "First name must be at least 4 characters."
+*                                - "Last name is required."
+*                                - "Last name must be at least 4 characters."
+*                                - "Username is required."
+*                                - "Username must be at least 4 characters."
+*                                - "Email is required."
+*                                - "Email is invalid."
+*                                - "Password is required."
+*                                - "Password must be at least 8 characters."
+*                              example: "First name is required."
+*                            param:
+*                              type: string
+*                              enum:
+*                                - first_name
+*                                - last_name
+*                                - username
+*                                - email
+*                                - password
+*                              example: first_name
+*                            location:
+*                              type: string
+*                              example: body
+*
+*       500:
+*         description: Internal server error — Unexpected error when creating the user
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 status:
+*                   type: boolean
+*                   example: false
+*                 message:
+*                   type: string
+*                   example: "Unexpected error while creating the user"
+*                 error:
+*                   type: string
+*                   example: "Database connection failed"
+
  *
  * /auth/renew:
  *   get:
- *     summary: Revalidar token
- *     description: Obtiene un nuevo token de autenticación
+ *     tags:
+ *       - Authentication
+ *     summary: Revalidate token
+ *     description: Obtains a new authentication token
  *     security:
- *       - bearerAuth: []
+ *       - XTokenAuth: []
  *     responses:
  *       200:
- *         description: Token renovado exitosamente
+ *         description: Autenticación exitosa
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: bool
+ *                   example: true
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 profiles:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["administrador", "cliente"]
  *                 token:
  *                   type: string
  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       401:
- *         description: Token inválido o expirado
- */
-
-// Añade este componente para la autenticación
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
+ *         description: No token provided in the request
  */

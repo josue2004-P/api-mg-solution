@@ -55,7 +55,7 @@ const loginUser = async (req, res = response) => {
       password
     );
     res.json({
-      ok: true,
+      status: true,
       id: uid,
       profiles,
       token,
