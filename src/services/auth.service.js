@@ -1,4 +1,5 @@
 const { getPrisma } = require("../database/prisma");
+const { toInt } = require("../helpers/toInt");
 const bcrypt = require("bcryptjs");
 const { generateJWT } = require("../helpers/jwt");
 const jwt = require("jsonwebtoken");
@@ -60,7 +61,7 @@ const revalidateToken = async (tokenObtained) => {
 
   const user = await prisma.users.findFirst({
     where: {
-      id: uid,
+      id: toInt(uid),
       is_active: true,
     },
     include: {

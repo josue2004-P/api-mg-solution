@@ -16,6 +16,9 @@ app.use(express.json());
 // Directorio Público
 app.use( express.static('public') );
 
+// Servir todas las imágenes en /images
+app.use("/images", express.static('storage/images'));
+
 // Configuración de Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
