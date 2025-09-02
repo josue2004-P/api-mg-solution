@@ -1,37 +1,37 @@
 services:
-  bd_mysql_mvp:
+  bd_mysql_mg:
     image: mysql:8.0
-    container_name: bd_mysql_mvp
+    container_name: bd_mysql_mg
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: bd_mysql_mvp
+      MYSQL_DATABASE: bd_mysql_mg
     ports:
       - '3307:3306'
     volumes:
-      - vol_mvp:/var/lib/mysql  
+      - vol_mg:/var/lib/mysql  
     networks:
-      - mvp_net
+      - mg_net
 
-  api_mvp:
+  api_mg:
     build: .
-    container_name: api_mvp
+    container_name: api_mg
     volumes:
       - .:/app
       - /app/node_modules
     ports:
       - '3000:3000'
     depends_on:
-      - bd_mysql_mvp
+      - bd_mysql_mg
     env_file:
       - .env
     networks:
-      - mvp_net
-      - mvp_proxy
+      - mg_net
+      - mg_proxy
     
 networks:
-  mvp_net:
-  mvp_proxy:
+  mg_net:
+  mg_proxy:
     external: true
 
 volumes:
-  vol_mvp:
+  vol_mg:
