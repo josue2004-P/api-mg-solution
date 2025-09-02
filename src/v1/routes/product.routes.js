@@ -1,26 +1,31 @@
 const express = require("express");
 const router = express.Router();
-const permissionController = require("../../controllers/permission.controller");
+const productController = require("../../controllers/product.controller");
 const { validateJWT } = require("../../middlewares/validate.jwt");
 const {
-  createPermissionValidation,
-  updatePermissionValidation,
-} = require("../../middlewares/permission.validate");
-
+  createProductValidation,
+  updateProductValidation,
+} = require("../../middlewares/product.validate");
 router.post(
   "/",
-  createPermissionValidation,
+  createProductValidation,
   validateJWT,
-  permissionController.createPermission
+  productController.createProduct
 );
-router.get("/", validateJWT, permissionController.getAllPermissions);
-router.get("/:id", validateJWT, permissionController.getPermissionById);
+router.get("/", 
+  validateJWT, 
+  productController.getAllProduct);
+router.get("/:id", 
+  validateJWT, 
+  productController.getProductById);
 router.put(
   "/:id",
-  updatePermissionValidation,
+  updateProductValidation,
   validateJWT,
-  permissionController.updatePermissionById
+  productController.updateProductById
 );
-router.delete("/:id", validateJWT, permissionController.deletePermissionById);
+router.delete("/:id", 
+  validateJWT, 
+  productController.deleteProductById);
 
 module.exports = router;
