@@ -3,8 +3,17 @@ const { toInt } = require("../helpers/toInt");
 
 const prisma = getPrisma();
 
-//SERVICE CREATE PRODUCT 
-const createProduct = async (name, description) => {
+//SERVICE CREATE PRODUCT
+const createProduct = async (
+  name,
+  description,
+  price,
+  stock,
+  categoryId,
+  brandId,
+  userCreateId
+) => {
+
   let nameRecord = await prisma.product.findFirst({
     where: {
       name: name,
@@ -19,6 +28,11 @@ const createProduct = async (name, description) => {
     data: {
       name: name,
       description: description,
+      price: parseFloat(price),
+      stock: toInt(stock),
+      categoryId: toInt(categoryId),
+      brandId: toInt(brandId),
+      userCreateId: toInt(userCreateId)
     },
   });
 
@@ -28,7 +42,7 @@ const createProduct = async (name, description) => {
   };
 };
 
-//SERVICE GET ALL PRODUCT 
+//SERVICE GET ALL PRODUCT
 const getAllProduct = async ({ name, page, limit }) => {
   const where = {};
 

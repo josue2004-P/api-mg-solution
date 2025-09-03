@@ -6,8 +6,11 @@ const {
   createProductValidation,
   updateProductValidation,
 } = require("../../middlewares/product.validate");
+const upload = require("../../middlewares/upload.middleware");
+
 router.post(
   "/",
+  upload.single("image"),
   createProductValidation,
   validateJWT,
   productController.createProduct

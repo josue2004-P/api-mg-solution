@@ -1,19 +1,39 @@
 const productService = require("../services/product.service");
 const { toInt } = require("../helpers/toInt");
+const path = require("path");
 
-// CONTROLLER CREATE PRODUCT 
+// CONTROLLER CREATE PRODUCT
 const createProduct = async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, price,stock, categoryId, brandId, userCreateId } =
+    req.body;
+
+  if (!req.file) return res.status(400).json({ error: "No se subió archivo" });
+
+  // Ruta de la imagen guardada
+  const imagePath = path.join("storage/images", req.file.filename);
 
   try {
     const data = await productService.createProduct(
       name,
-      description
+      description,
+      price,
+      stock,
+      categoryId,
+      brandId,
+      userCreateId
     );
     res.status(201).send({
       status: "Ok",
       message: "Operación Exitosa",
-      data,
+      data: {
+        name,
+        description,
+        stock,
+        categoryId,
+        brandId,
+        userCreateId,
+        image: imagePath,
+      },
     });
   } catch (error) {
     if (error.message) {
@@ -31,7 +51,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-// CONTROLLER GET ALL PRODUCT 
+// CONTROLLER GET ALL PRODUCT
 const getAllProduct = async (req, res) => {
   const { name, page = 1, limit = 5 } = req.query;
 
@@ -42,9 +62,7 @@ const getAllProduct = async (req, res) => {
   };
 
   try {
-    const records = await productService.getAllProduct(
-      filters
-    );
+    const records = await productService.getAllProduct(filters);
 
     res.status(201).send({
       status: "Ok",
@@ -99,10 +117,7 @@ const updateProductById = async (req, res) => {
     const id = toInt(req.params.id);
     const data = req.body;
 
-    const answer = await productService.updateProductById(
-      id,
-      data
-    );
+    const answer = await productService.updateProductById(id, data);
 
     res.status(201).send({
       status: "Ok",
