@@ -11,7 +11,8 @@ const createProduct = async (
   stock,
   categoryId,
   brandId,
-  userCreateId
+  userCreateId,
+  imagePath
 ) => {
 
   let nameRecord = await prisma.product.findFirst({
@@ -32,7 +33,8 @@ const createProduct = async (
       stock: toInt(stock),
       categoryId: toInt(categoryId),
       brandId: toInt(brandId),
-      userCreateId: toInt(userCreateId)
+      userCreateId: toInt(userCreateId),
+      path: imagePath
     },
   });
 

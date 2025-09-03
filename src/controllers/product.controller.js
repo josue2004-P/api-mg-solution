@@ -7,7 +7,7 @@ const createProduct = async (req, res) => {
   const { name, description, price,stock, categoryId, brandId, userCreateId } =
     req.body;
 
-  if (!req.file) return res.status(400).json({ error: "No se subió archivo" });
+  if (!req.file) return res.status(400).json({ error: "No existe el archivo" });
 
   // Ruta de la imagen guardada
   const imagePath = path.join("storage/images", req.file.filename);
@@ -20,7 +20,8 @@ const createProduct = async (req, res) => {
       stock,
       categoryId,
       brandId,
-      userCreateId
+      userCreateId,
+      imagePath
     );
     res.status(201).send({
       status: "Ok",

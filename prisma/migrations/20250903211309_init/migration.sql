@@ -94,6 +94,7 @@ CREATE TABLE `product` (
     `description` VARCHAR(100) NULL,
     `price` DOUBLE NOT NULL,
     `stock` INTEGER NOT NULL,
+    `path` VARCHAR(191) NULL,
     `categoryId` INTEGER NOT NULL,
     `brandId` INTEGER NOT NULL,
     `userCreateId` INTEGER NOT NULL,
