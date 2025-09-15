@@ -10,7 +10,7 @@ const createProduct = async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No existe el archivo" });
 
   // Ruta de la imagen guardada
-  const imagePath = path.join("storage/images", req.file.filename);
+  const imagePath =  req.file.filename;
 
   try {
     const data = await productService.createProduct(
