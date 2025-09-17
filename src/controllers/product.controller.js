@@ -37,6 +37,8 @@ const createProduct = async (req, res) => {
       },
     });
   } catch (error) {
+
+    console.log(error)
     if (error.message) {
       res.status(400).send({
         status: "Error",
