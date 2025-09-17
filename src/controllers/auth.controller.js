@@ -1,8 +1,5 @@
 const authService = require("../services/auth.service");
-const {
-  mapRequestToUser,
-  formatUser,
-} = require("../helpers/auth.helpers");
+const { mapRequestToUser, formatUser } = require("../helpers/auth.helpers");
 
 const createUser = async (req, res) => {
   const user = mapRequestToUser(req.body);
@@ -35,14 +32,31 @@ const createUser = async (req, res) => {
 const revalidateToken = async (req, res = response) => {
   const tokenObtained = req.header("x-token");
 
-  const { uid, token, profile } = await authService.revalidateToken(tokenObtained);
+  try {
+    const { uid, token, profile } = await authService.revalidateToken(
+      tokenObtained
+    );
 
-  res.json({
-    ok: true,
-    id: uid,
-    profile,
-    token,
-  });
+    res.json({
+      ok: true,
+      id: uid,
+      profile,
+      token,
+    });
+  } catch (error) {
+    if (error.message) {
+      res.status(400).send({
+        status: false,
+        message: error.message,
+      });
+    } else {
+      // Manejo de otros tipos de errores
+      res.status(500).send({
+        status: false,
+        message: error.message,
+      });
+    }
+  }
 };
 
 // LOGIN
