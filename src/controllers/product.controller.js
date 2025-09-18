@@ -12,6 +12,7 @@ const createProduct = async (req, res) => {
   // Ruta de la imagen guardada
   const imagePath =  req.file.filename;
 
+
   try {
     const data = await productService.createProduct(
       name,
